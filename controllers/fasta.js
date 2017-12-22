@@ -35,7 +35,12 @@ function parseData(array) {
         obj[array[t].charAt(i)]++
       }
       applyPercentage(obj).then(pObj => {
-        responce.push(pObj);
+        const oKeys = Object.keys(pObj);
+        for (let l = 0; l < oKeys.length; l++) {
+          const key = Object.keys(pObj)[l];
+          const res = {pos: i, type: key, value: obj[key] };
+          responce.push(res);
+        }
       })
     }
     resolve(responce);

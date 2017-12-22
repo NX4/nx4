@@ -4,8 +4,8 @@ import './style.scss';
 
 console.log(__ENV__);
 
-const width = 750;
-const height = 400;
+const width = 30000;
+const height = 200;
 
 const mainCanvas = d3.select('#container')
 .append('canvas')
@@ -16,95 +16,85 @@ const mainCanvas = d3.select('#container')
 const customBase = document.createElement('custom');
 const custom = d3.select(customBase);
 
+const aminos = ['A', 'C', 'T', 'G', 'N'];
+const yScale = d3.scaleOrdinal()
+  .domain(aminos)
+  .range([0, 25, 50, 75, 100]);
+
+const xScale = d3.scaleLinear()
+  .domain([0, 15383])
+  .range([0, 400000]);
+
+const color = d3.scaleLinear()
+  .domain([1, 100])
+  .interpolate(d3.interpolateHcl)
+  .range([d3.rgb('#e6e6e6'), d3.rgb('#000')]);
+
 const groupSpacing = 4;
 const cellSpacing = 2;
 const cellSize = Math.floor((width - 11 * groupSpacing) / 100) - cellSpacing;
 let data = [];
 
 axios.get('api/fasta')
-  .then(function (response) {
+  .then((response) => {
     document.getElementById('root').innerHTML = response.data.length;
     data = response.data;
     init();
   })
-  .catch(function (error) {
+  .catch((error) => {
     console.log(error);
   });
 
+function databind(data) {
 
-function init() {
+  const join = custom.selectAll('custom.rect')
+    .data(data);
 
-  databind(data);
+  const enterSel = join.enter()
+    .append('custom')
+    .attr('class', 'rect')
+    .attr('x', function(d) {
+      return xScale(d.pos);
+    })
+    .attr('y', function(d) {
+      return yScale(d.type);
+    })
+    .attr('width', 0)
+    .attr('height', 0);
 
-  var t = d3.timer(function(elapsed) {
-    console.log('timer');
-    draw(mainCanvas, false); // <--- new insert arguments
-    if (elapsed > 300) t.stop();
-  });
+  join
+    .merge(enterSel)
+    .transition()
+    .attr('width', 20)
+    .attr('height', 20)
+    .attr('fillStyle', function(d) {
+      return color(d.value);
+    });
 
+  const exitSel = join.exit()
+    .transition()
+    .attr('width', 0)
+    .attr('height', 0)
+    .remove();
 }
 
-function databind(data) {
-  
-        //colorScale = d3.scaleSequential(d3.interpolateSpectral).domain(d3.extent(data, function(d) { return d.value; }));
-        
-        var join = custom.selectAll('custom.rect')
-          .data(data);
-  
-        var enterSel = join.enter()
-          .append('custom')
-          .attr('class', 'rect')
-          .attr('x', function(d, i) {
-            var x0 = Math.floor(i / 100) % 10, x1 = Math.floor(i % 10);
-            return groupSpacing * x0 + (cellSpacing + cellSize) * (x1 + x0 * 10);
-          })
-          .attr('y', function(d, i) {
-            var y0 = Math.floor(i / 1000), y1 = Math.floor(i % 100 / 10);
-            return groupSpacing * y0 + (cellSpacing + cellSize) * (y1 + y0 * 10);
-          })
-          .attr('width', 0)
-          .attr('height', 0);
-  
-        join
-          .merge(enterSel)
-          .transition()
-          .attr('width', cellSize)
-          .attr('height', cellSize)
-          .attr('fillStyle', '#000')
-  
-        var exitSel = join.exit()
-          .transition()
-          .attr('width', 0)
-          .attr('height', 0)
-          .remove();
-  
-      } // databind()
-  
-  
-      // === Draw canvas === //
-  
-      function draw(canvas, hidden) { // <---- new arguments
-  
-        // build context
-        var context = canvas.node().getContext('2d');
-  
-  
-        // clear canvas
-        context.clearRect(0, 0, width, height);
-  
-        
-        // draw each individual custom element with their properties
-        
-        var elements = custom.selectAll('custom.rect') // this is the same as the join variable, but used here to draw
-        
-        elements.each(function(d,i) { // for each virtual/custom element...
-  
-          var node = d3.select(this);
-  
-          context.fillStyle = node.attr('fillStyle'); // <--- new: node colour depends on the canvas we draw 
-          context.fillRect(node.attr('x'), node.attr('y'), node.attr('width'), node.attr('height'));
-  
-        });
-  
-      } // draw()
+function draw(canvas, hidden) {
+  const context = canvas.node().getContext('2d');
+  context.clearRect(0, 0, width, height);
+  const elements = custom.selectAll('custom.rect')
 
+  elements.each(function(d,i) {
+    const node = d3.select(this);
+    context.fillStyle = node.attr('fillStyle');
+    context.fillRect(node.attr('x'), node.attr('y'), node.attr('width'), node.attr('height'));
+  });
+}
+
+function init() {
+  databind(data);
+
+  const t = d3.timer((elapsed) => {
+    draw(mainCanvas, false);
+    if (elapsed > 700) t.stop();
+  });
+}
