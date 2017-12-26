@@ -4,14 +4,13 @@ import './style.scss';
 
 console.log(__ENV__);
 
-const width = 30000;
+const width = d3.select('#container').node().getBoundingClientRect().width;
 const height = 200;
 
-const mainCanvas = d3.select('#container')
-.append('canvas')
-.classed('mainCanvas', true)
-.attr('width', width)
-.attr('height', height);
+const canvas = d3.select('#container')
+  .append('canvas')
+  .attr('width', width)
+  .attr('height', height);
 
 const customBase = document.createElement('custom');
 const custom = d3.select(customBase);
@@ -23,34 +22,28 @@ const yScale = d3.scaleOrdinal()
 
 const xScale = d3.scaleLinear()
   .domain([0, 15383])
-  .range([0, 400000]);
+  .range([0, width]);
+
+const x2 = d3.scaleLinear()
+  .domain([0, 15383])
+  .range([0, width]);
 
 const color = d3.scaleLinear()
   .domain([1, 100])
   .interpolate(d3.interpolateHcl)
   .range([d3.rgb('#e6e6e6'), d3.rgb('#000')]);
 
-const groupSpacing = 4;
-const cellSpacing = 2;
-const cellSize = Math.floor((width - 11 * groupSpacing) / 100) - cellSpacing;
-let data = [];
-
-axios.get('api/fasta')
-  .then((response) => {
-    document.getElementById('root').innerHTML = response.data.length;
-    data = response.data;
-    init();
-  })
-  .catch((error) => {
-    console.log(error);
-  });
+let gData = [];
 
 function databind(data) {
-
   const join = custom.selectAll('custom.rect')
     .data(data);
 
-  const enterSel = join.enter()
+  join.exit().remove();
+
+  console.log(xScale.domain())
+
+  join.enter()
     .append('custom')
     .attr('class', 'rect')
     .attr('x', function(d) {
@@ -59,29 +52,28 @@ function databind(data) {
     .attr('y', function(d) {
       return yScale(d.type);
     })
-    .attr('width', 0)
-    .attr('height', 0);
-
-  join
-    .merge(enterSel)
-    .transition()
     .attr('width', 20)
     .attr('height', 20)
     .attr('fillStyle', function(d) {
       return color(d.value);
     });
 
-  const exitSel = join.exit()
-    .transition()
-    .attr('width', 0)
-    .attr('height', 0)
-    .remove();
+  // const exitSel = join.exit()
+  //   .transition()
+  //   .attr('width', 0)
+  //   .attr('height', 0)
+  //   .remove();
 }
 
-function draw(canvas, hidden) {
-  const context = canvas.node().getContext('2d');
-  context.clearRect(0, 0, width, height);
-  const elements = custom.selectAll('custom.rect')
+function draw(_canvas) {
+  const context = _canvas.node().getContext('2d');
+
+  context.fillStyle = '#fff';
+  context.fillRect(0, 0, width, height);
+
+  // context.clearRect(0, 0, width, height);
+  const elements = custom.selectAll('custom.rect');
+  console.log(elements)
 
   elements.each(function(d,i) {
     const node = d3.select(this);
@@ -91,10 +83,43 @@ function draw(canvas, hidden) {
 }
 
 function init() {
-  databind(data);
+  const brushContainer = d3.select('.brush-container');
 
+  const brushSvg = brushContainer.append('svg')
+    .attr('width', width)
+    .attr('height', 50)
+
+  const brush = d3.brushX()
+    .extent([[0, 0], [width, 40]])
+    .on("brush end", brushed);
+
+  const bContext = brushSvg.append("g")
+
+  bContext.append("g")
+    .attr("class", "brush")
+    .call(brush)
+    .call(brush.move, xScale.range());
+}
+
+
+function brushed() {
+  if (d3.event.sourceEvent && d3.event.sourceEvent.type === 'zoom') return;
+  const s = d3.event.selection;
+  xScale.domain(s.map(x2.invert, x2));
+
+  databind(gData);
   const t = d3.timer((elapsed) => {
-    draw(mainCanvas, false);
-    if (elapsed > 700) t.stop();
+    draw(canvas);
+    if (elapsed > 1000) t.stop();
   });
 }
+
+axios.get('api/fasta')
+  .then((response) => {
+    document.getElementById('root').innerHTML = response.data.length;
+    gData = response.data;
+    init();
+  })
+  .catch((error) => {
+    console.log(error);
+  });

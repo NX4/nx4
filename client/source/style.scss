@@ -4,7 +4,11 @@ body {
   font-family: 'Droid Sans', sans-serif;
 }
 
+.brush-container {
+  width: 100%;
+}
+
 .chart_container {
   width: 100%;
-  overflow-x: scroll;
+  // overflow-x: scroll;
 }
