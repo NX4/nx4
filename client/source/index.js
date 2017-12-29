@@ -1,10 +1,11 @@
 import axios from 'axios';
 import * as d3 from 'd3';
+import { filter } from 'lodash';
 import './style.scss';
 
 console.log(__ENV__);
 
-const width = d3.select('#container').node().getBoundingClientRect().width;
+const width = d3.select('#chart_container').node().getBoundingClientRect().width;
 const height = 200;
 
 const canvas = d3.select('#container')
@@ -21,11 +22,10 @@ const yScale = d3.scaleOrdinal()
   .range([0, 25, 50, 75, 100]);
 
 const xScale = d3.scaleLinear()
-  .domain([0, 15383])
   .range([0, width]);
 
 const x2 = d3.scaleLinear()
-  .domain([0, 15383])
+  .domain([0, 15384])
   .range([0, width]);
 
 const color = d3.scaleLinear()
@@ -39,33 +39,37 @@ function databind(data) {
   const join = custom.selectAll('custom.rect')
     .data(data);
 
-  join.exit().remove();
-
-  join.enter()
+  const enterSel = join.enter()
     .append('custom')
     .attr('class', 'rect')
-    .attr('x', function(d) {
-      return xScale(d.pos);
-    })
+    .attr('x', 0)
     .attr('y', function(d) {
       return yScale(d.type);
     })
-    .attr('width', 20)
+    .attr('fillStyle', function(d) { return color(d.value); })
+    .attr('width', 0)
+    .attr('height', 0);
+  join
+    .merge(enterSel)
+    .transition()
+    .attr('x', function(d) {
+      return xScale(d.pos);
+    })
+    .attr('width', 5)
     .attr('height', 20)
-    .attr('fillStyle', function(d) {
-      return color(d.value);
-    });
+    .attr('fillStyle', function(d) { return color(d.value); })
+
+  const exitSel = join.exit()
+    .transition()
+    .attr('width', 0)
+    .attr('height', 0)
+    .remove();
 }
 
 function draw(_canvas) {
   const context = _canvas.node().getContext('2d');
   context.clearRect(0, 0, width, height);
-  context.fillStyle = '#fff';
-  context.fillRect(0, 0, width, height);
-
-  
   const elements = custom.selectAll('custom.rect');
-  console.log(elements);
 
   elements.each(function(d,i) {
     const node = d3.select(this);
@@ -93,23 +97,28 @@ function init() {
     .call(brush.move, xScale.range());
 }
 
+function rageData(p1, p2) {
+  const nData = filter(gData, function(o) { return (o.pos > p1 && o.pos < p2); });
+  return nData;
+}
+
 function brushed() {
   if (d3.event.sourceEvent && d3.event.sourceEvent.type === 'zoom') return;
   const s = d3.event.selection;
   // xScale.domain(s.map(x2.invert, x2)); //por que hay dos valores en map()????
   const newRange = s.map((x2.invert));
-  const upper = Math.round(newRange[0]);
-  const lower = Math.round(newRange[1]);
-  const newData = gData.slice(upper, lower) // deberiamos agregar +1 en lower ?
-  // console.log('reg', s.map(x2));
+  const lower = Math.round(newRange[0]);
+  const upper = Math.round(newRange[1]);
+  xScale.domain(s.map(x2.invert, x2));
+  // xScale.range([upper, lower]);
+  const newData = rageData(lower, upper);
+  // console.log(xScale(newData[newData.length - 1]));
   // console.log('weird', s.map(x2.invert, x2));
-
-  console.log(newData);
 
   databind(newData);
   const t = d3.timer((elapsed) => {
     draw(canvas);
-    if (elapsed > 1000) t.stop();
+    if (elapsed > 600) t.stop();
   });
 }
 
