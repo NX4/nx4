@@ -59,13 +59,13 @@ function databind(data) {
 
 function draw(_canvas) {
   const context = _canvas.node().getContext('2d');
-
+  context.clearRect(0, 0, width, height);
   context.fillStyle = '#fff';
   context.fillRect(0, 0, width, height);
 
-  // context.clearRect(0, 0, width, height);
+  
   const elements = custom.selectAll('custom.rect');
-  console.log(elements)
+  console.log(elements);
 
   elements.each(function(d,i) {
     const node = d3.select(this);
