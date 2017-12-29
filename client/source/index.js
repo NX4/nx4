@@ -41,8 +41,6 @@ function databind(data) {
 
   join.exit().remove();
 
-  console.log(xScale.domain())
-
   join.enter()
     .append('custom')
     .attr('class', 'rect')
@@ -57,12 +55,6 @@ function databind(data) {
     .attr('fillStyle', function(d) {
       return color(d.value);
     });
-
-  // const exitSel = join.exit()
-  //   .transition()
-  //   .attr('width', 0)
-  //   .attr('height', 0)
-  //   .remove();
 }
 
 function draw(_canvas) {
@@ -87,27 +79,34 @@ function init() {
 
   const brushSvg = brushContainer.append('svg')
     .attr('width', width)
-    .attr('height', 50)
+    .attr('height', 50);
 
   const brush = d3.brushX()
     .extent([[0, 0], [width, 40]])
-    .on("brush end", brushed);
+    .on('end', brushed);
 
-  const bContext = brushSvg.append("g")
+  const bContext = brushSvg.append('g');
 
-  bContext.append("g")
-    .attr("class", "brush")
+  bContext.append('g')
+    .attr('class', 'brush')
     .call(brush)
     .call(brush.move, xScale.range());
 }
 
-
 function brushed() {
   if (d3.event.sourceEvent && d3.event.sourceEvent.type === 'zoom') return;
   const s = d3.event.selection;
-  xScale.domain(s.map(x2.invert, x2));
+  // xScale.domain(s.map(x2.invert, x2)); //por que hay dos valores en map()????
+  const newRange = s.map((x2.invert));
+  const upper = Math.round(newRange[0]);
+  const lower = Math.round(newRange[1]);
+  const newData = gData.slice(upper, lower) // deberiamos agregar +1 en lower ?
+  // console.log('reg', s.map(x2));
+  // console.log('weird', s.map(x2.invert, x2));
 
-  databind(gData);
+  console.log(newData);
+
+  databind(newData);
   const t = d3.timer((elapsed) => {
     draw(canvas);
     if (elapsed > 1000) t.stop();
