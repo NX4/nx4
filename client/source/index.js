@@ -5,8 +5,12 @@ import './style.scss';
 
 console.log(__ENV__);
 
+/** --- DIMENSIONS + MISC --- */
+
 const width = d3.select('#chart_container').node().getBoundingClientRect().width;
 const height = 200;
+
+const brushHeight = 50;
 
 const canvas = d3.select('#container')
   .append('canvas')
@@ -17,6 +21,9 @@ const customBase = document.createElement('custom');
 const custom = d3.select(customBase);
 
 const aminos = ['A', 'C', 'T', 'G', 'N'];
+
+/** --- SCALES --- */
+
 const yScale = d3.scaleOrdinal()
   .domain(aminos)
   .range([0, 25, 50, 75, 100]);
@@ -32,6 +39,14 @@ const color = d3.scaleLinear()
   .domain([0, 1])
   .interpolate(d3.interpolateHcl)
   .range([d3.rgb('#e6e6e6'), d3.rgb('#000')]);
+
+const lineScaleX = d3.scaleLinear()
+  .domain([0, 10]) //TODO, CALCULATE length of sequence? (it's not gData.length!)
+  .range([0, width]);
+
+const lineScaleY = d3.scaleLinear()
+  .domain([0, 2]) //TODO, depends on base of LOG used for entropy
+  .range([0, brushHeight - 10]);
 
 let gData = [];
 
@@ -79,14 +94,19 @@ function draw(_canvas) {
 }
 
 function init() {
+  const dummy = [0.3, 1.4, 0.5, 0.2, 1, 0.3, 1.5, 0.3, 0.7, 0.8, 2]; //TODO, dummy data used for line chart
+  const line = d3.line()
+    .x(function(d, i) { return lineScaleX(i); })
+    .y(function (d) { return lineScaleY(d); });
+
   const brushContainer = d3.select('.brush-container');
 
   const brushSvg = brushContainer.append('svg')
     .attr('width', width)
-    .attr('height', 50);
+    .attr('height', brushHeight);
 
   const brush = d3.brushX()
-    .extent([[0, 0], [width, 40]])
+    .extent([[0, 0], [width, brushHeight - 10]])
     .on('end', brushed);
 
   const bContext = brushSvg.append('g');
@@ -95,6 +115,15 @@ function init() {
     .attr('class', 'brush')
     .call(brush)
     .call(brush.move, xScale.range());
+
+  bContext.append('path')
+    .datum(dummy) //TODO, change for array of entropies
+    .attr('fill', 'none')
+    .attr('stroke', 'steelblue')
+    .attr('stroke-linejoin', 'round')
+    .attr('stroke-linecap', 'round')
+    .attr('stroke-width', 1.5)
+    .attr('d', line);
 }
 
 function rageData(p1, p2) {
@@ -122,31 +151,11 @@ function brushed() {
   });
 }
 
-// function getEntropy(){
-
-// }
-
-// // temp fun to create simulated array of entropy values (0 to 1)
-// // Should be moved to server and return on an endpoint
-// // Values used to create a line chart in the "context" of the brush
-// function makePointData(data) {
-//   const newArr = [];
-//   for (let i = 0; i < data.length; i++) {
-//     newArr.push(Math.random());
-//   }
-//   return newArr;
-// }
-
-// // line function for the "context"
-// d3.line()
-//   .x()
-//   .y(makePointData());
-
 axios.get('api/fasta')
   .then((response) => {
     document.getElementById('root').innerHTML = response.data.length;
     gData = response.data;
-    console.log(gData.slice(8));
+    console.log(gData[1]);
     init();
   })
   .catch((error) => {
