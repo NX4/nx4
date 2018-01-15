@@ -29,7 +29,7 @@ const x2 = d3.scaleLinear()
   .range([0, width]);
 
 const color = d3.scaleLinear()
-  .domain([1, 100])
+  .domain([0, 1])
   .interpolate(d3.interpolateHcl)
   .range([d3.rgb('#e6e6e6'), d3.rgb('#000')]);
 
@@ -122,10 +122,31 @@ function brushed() {
   });
 }
 
+// function getEntropy(){
+
+// }
+
+// // temp fun to create simulated array of entropy values (0 to 1)
+// // Should be moved to server and return on an endpoint
+// // Values used to create a line chart in the "context" of the brush
+// function makePointData(data) {
+//   const newArr = [];
+//   for (let i = 0; i < data.length; i++) {
+//     newArr.push(Math.random());
+//   }
+//   return newArr;
+// }
+
+// // line function for the "context"
+// d3.line()
+//   .x()
+//   .y(makePointData());
+
 axios.get('api/fasta')
   .then((response) => {
     document.getElementById('root').innerHTML = response.data.length;
     gData = response.data;
+    console.log(gData.slice(8));
     init();
   })
   .catch((error) => {

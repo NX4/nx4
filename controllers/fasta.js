@@ -18,7 +18,7 @@ function applyPercentage(obj) {
   return new Promise(resolve => {
     const keys = Object.keys(obj);
     for (let i = 0; i < keys.length; i++) {
-      obj[keys[i]] = Math.round((obj[keys[i]] * 100) / fastaTotal);
+      obj[keys[i]] = new Number( (obj[keys[i]] / fastaTotal).toFixed(2));
     }
     resolve(obj);
   })
@@ -26,7 +26,7 @@ function applyPercentage(obj) {
 
 function parseData(array) {
   return new Promise(resolve => {
-    const responce = [];
+    const response = [];
     for (let i = 0; i < array[0].length; i++) {
       const obj = {
         A:0, C:0, G: 0, T:0, N:0
@@ -36,14 +36,18 @@ function parseData(array) {
       }
       applyPercentage(obj).then(pObj => {
         const oKeys = Object.keys(pObj);
+
+        //shannon entropy
+        //-( (val/100)*Math.log2(val/100) + ... )
+
         for (let l = 0; l < oKeys.length; l++) {
           const key = Object.keys(pObj)[l];
           const res = {pos: i, type: key, value: obj[key] };
-          responce.push(res);
+          response.push(res);
         }
       })
     }
-    resolve(responce);
+    resolve(response);
   })
 }
 
