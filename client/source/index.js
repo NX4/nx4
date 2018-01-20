@@ -155,9 +155,18 @@ axios.get('api/fasta')
   .then((response) => {
     document.getElementById('root').innerHTML = response.data.length;
     gData = response.data;
-    console.log(gData[1]);
+    console.log('hello', gData[1]);
     init();
+    return axios.get('api/entropy');
   })
-  .catch((error) => {
-    console.log(error);
+  .then((response) => {
+    console.log('Response', response);
   });
+
+// axios.get('api/entropy')
+//   .then((response) => {
+//     console.log(response.data[1]);
+//   })
+//   .catch((error) => {
+//     console.log(error);
+//   });

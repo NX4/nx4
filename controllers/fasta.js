@@ -37,6 +37,8 @@ function parseData(array) {
       applyPercentage(obj).then(pObj => {
         const oKeys = Object.keys(pObj);
 
+        // console.log(pObj);
+
         //shannon entropy
         //-( (val/100)*Math.log2(val/100) + ... )
 
