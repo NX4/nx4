@@ -21,6 +21,7 @@ const customBase = document.createElement('custom');
 const custom = d3.select(customBase);
 
 const aminos = ['A', 'C', 'T', 'G', 'N'];
+let squareWidth = 0;
 
 /** --- SCALES --- */
 
@@ -36,19 +37,20 @@ const x2 = d3.scaleLinear()
   .range([0, width]);
 
 const color = d3.scaleLinear()
-  .domain([0, 1])
+  .domain([0, 100])
   .interpolate(d3.interpolateHcl)
   .range([d3.rgb('#e6e6e6'), d3.rgb('#000')]);
 
 const lineScaleX = d3.scaleLinear()
-  .domain([0, 10]) //TODO, CALCULATE length of sequence? (it's not gData.length!)
+  .domain([0, 15384]) //TODO, CALCULATE length of sequence? (it's not gData.length!)
   .range([0, width]);
 
 const lineScaleY = d3.scaleLinear()
   .domain([0, 2]) //TODO, depends on base of LOG used for entropy
-  .range([0, brushHeight - 10]);
+  .range([brushHeight - 10, 0]);
 
 let gData = [];
+let entropyData = [];
 
 function databind(data) {
   const join = custom.selectAll('custom.rect')
@@ -70,7 +72,7 @@ function databind(data) {
     .attr('x', function(d) {
       return xScale(d.pos);
     })
-    .attr('width', 5)
+    .attr('width', squareWidth)
     .attr('height', 20)
     .attr('fillStyle', function(d) { return color(d.value); })
 
@@ -94,10 +96,10 @@ function draw(_canvas) {
 }
 
 function init() {
-  const dummy = [0.3, 1.4, 0.5, 0.2, 1, 0.3, 1.5, 0.3, 0.7, 0.8, 2]; //TODO, dummy data used for line chart
+  squareWidth = width / 15384;
   const line = d3.line()
     .x(function(d, i) { return lineScaleX(i); })
-    .y(function (d) { return lineScaleY(d); });
+    .y(function (d) { return lineScaleY(d.e); });
 
   const brushContainer = d3.select('.brush-container');
 
@@ -117,7 +119,7 @@ function init() {
     .call(brush.move, xScale.range());
 
   bContext.append('path')
-    .datum(dummy) //TODO, change for array of entropies
+    .datum(entropyData) //TODO, change for array of entropies
     .attr('fill', 'none')
     .attr('stroke', 'steelblue')
     .attr('stroke-linejoin', 'round')
@@ -138,6 +140,7 @@ function brushed() {
   const newRange = s.map((x2.invert));
   const lower = Math.round(newRange[0]);
   const upper = Math.round(newRange[1]);
+  squareWidth = width / (upper - lower);
   xScale.domain(s.map(x2.invert, x2));
   // xScale.range([upper, lower]);
   const newData = rageData(lower, upper);
@@ -151,22 +154,15 @@ function brushed() {
   });
 }
 
-axios.get('api/fasta')
+axios.get('api/entropy')
   .then((response) => {
+    console.log(response);
     document.getElementById('root').innerHTML = response.data.length;
-    gData = response.data;
-    console.log('hello', gData[1]);
+    gData = response.data[0];
+    entropyData = response.data[1];
     init();
-    return axios.get('api/entropy');
-  })
-  .then((response) => {
-    console.log('Response', response);
+    // return axios.get('api/entropy');
   });
-
-// axios.get('api/entropy')
-//   .then((response) => {
-//     console.log(response.data[1]);
-//   })
-//   .catch((error) => {
-//     console.log(error);
-//   });
+  // .then((response) => {
+  //   console.log('Response', response);
+  // });

@@ -18,7 +18,8 @@ function applyPercentage(obj) {
     return new Promise(resolve => {
         const keys = Object.keys(obj);
         for (let i = 0; i < keys.length; i++) {
-            obj[keys[i]] = new Number((obj[keys[i]] / fastaTotal).toFixed(2));
+            const val = obj[keys[i]] / fastaTotal;
+            obj[keys[i]] = Math.round(val * 100);
         }
         resolve(obj);
     })
@@ -27,36 +28,30 @@ function applyPercentage(obj) {
 function parseData(array) {
     return new Promise(resolve => {
         const response = [];
-        var test = [];
-        var store = new Number();
+        const entropy = [];
         for (let i = 0; i < array[0].length; i++) {
             const obj = {
                 A: 0, C: 0, G: 0, T: 0, N: 0
             };
             for (let t = 0; t < array.length; t++) {
-                obj[array[t].charAt(i)]++
+                obj[array[t].charAt(i)] += 1;
             }
             applyPercentage(obj).then(pObj => {
+                const cEntropy = [];
+                let vEntropy = 0;
                 const oKeys = Object.keys(pObj);
-                // var test = new Number(0);
-
-                // console.log(pObj);
-
-                //shannon entropy
-                //-( (val/100)*Math.log2(val/100) + ... )
-
                 for (let l = 0; l < oKeys.length; l++) {
                     const key = Object.keys(pObj)[l];
-                    store = store + obj[key];
-
                     const res = { pos: i, type: key, value: obj[key] };
-                    // const test = 'this is a test';
+                    if (obj[key] !== 0) {
+                        vEntropy += ( (obj[key]/100) * Math.log2(obj[key]/100) );
+                    }
                     response.push(res);
                 }
-                console.log(store);
+                entropy.push({i, e: vEntropy * -1});
             })
         }
-        resolve(response);
+        resolve([response, entropy]);
     })
 }
 
@@ -71,9 +66,10 @@ function init() {
             arraySeqs(seqs).then(arr => {
                 // console.log(`Array of ${arr.length} sequence done`)
                 console.log('this is a test of the entropy')
-                parseData(arr).then(res => {
-                    // console.log(`All ${res.length} positions done`);
-                    console.log('this is a test of the entropy v2')
+                parseData(arr).then( (res) => {
+                    console.log(`All ${res[0].length} positions done`);
+                    // console.log(res[1]);
+                    // console.log('this is a test of the entropy v2')
                     resolve(res);
                 })
             })
