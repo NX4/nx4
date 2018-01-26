@@ -64,12 +64,8 @@ function init() {
             const seqs = fastaParser.parse(data);
             fastaTotal = seqs.length;
             arraySeqs(seqs).then(arr => {
-                // console.log(`Array of ${arr.length} sequence done`)
-                console.log('this is a test of the entropy')
                 parseData(arr).then( (res) => {
                     console.log(`All ${res[0].length} positions done`);
-                    // console.log(res[1]);
-                    // console.log('this is a test of the entropy v2')
                     resolve(res);
                 })
             })
