@@ -5,15 +5,21 @@ import './style.scss';
 
 console.log(__ENV__);
 
-/** --- DIMENSIONS + MISC --- */
-/* The interface is composed of:
-- brush (brush) - d3
-- zoomed area (overview) - d3
-- alignment view (focus) - canvas
+
+/*
+--- cAlign Developer notes ---
+The interface is composed of:
+- context ("brush") - d3
+- zoomed area ("overview") - d3
+- alignment view ("focus") - d3 + canvas
 */
+
+
+/** --------- GLOBAL VARS --------- */
+
+/** --- DIMENSIONS --- */
+
 const margin = { top: 20, right: 20, bottom: 20, left: 20 };
-const width = d3.select('#chart_container').node().getBoundingClientRect().width - margin.left - margin.right;
-const height = 200 - margin.top - margin.bottom;
 
 const brushWidth = d3.select('#brush-container').node().getBoundingClientRect().width - margin.left - margin.right;
 const brushHeight = d3.select('#brush-container').node().getBoundingClientRect().height - margin.top - margin.bottom;
@@ -21,15 +27,10 @@ const brushHeight = d3.select('#brush-container').node().getBoundingClientRect()
 const overviewWidth = d3.select('#overview-container').node().getBoundingClientRect().width - margin.left - margin.right;
 const overviewHeight = d3.select('#overview-container').node().getBoundingClientRect().height - margin.top - margin.bottom;
 
-const canvas = d3.select('#container')
-  .append('canvas')
-  .attr('width', width)
-  .attr('height', height);
-
-d3.select('#container').style('margin-left', margin.left);
-
-const customBase = document.createElement('custom');
-const custom = d3.select(customBase);
+// TO DO: change names to something like "focusWidth" etc
+// TO DO: hardcoded '200' value is not idea
+const width = d3.select('#chart_container').node().getBoundingClientRect().width - margin.left - margin.right;
+const height = 200 - margin.top - margin.bottom;
 
 const aminos = ['A', 'C', 'T', 'G', 'N'];
 let squareWidth = 0;
@@ -42,14 +43,9 @@ const yScale = d3.scaleOrdinal()
 const xScale = d3.scaleLinear()
   .range([0, width]);
 
-const x2 = d3.scaleLinear();
+const x2 = d3.scaleLinear(); // TO DO: clearly not a semantic name
 
 const overviewX = d3.scaleLinear();
-
-const color = d3.scaleLinear()
-  .domain([0, 100])
-  .interpolate(d3.interpolateHcl)
-  .range([d3.rgb('#e6e6e6'), d3.rgb('#000')]);
 
 const lineScaleY = d3.scaleLinear()
   .domain([0, 2]) // TODO, depends on base of LOG used for entropy
@@ -58,6 +54,11 @@ const lineScaleY = d3.scaleLinear()
 const overviewScaleY = d3.scaleLinear()
   .domain([0, 2]) // TODO, depends on base of LOG used for entropy
   .range([overviewHeight - 0, 0]);
+
+const color = d3.scaleLinear()
+  .domain([0, 100])
+  .interpolate(d3.interpolateHcl)
+  .range([d3.rgb('#e6e6e6'), d3.rgb('#000')]);
 
 const zoom = d3.zoom()
   .scaleExtent([1, Infinity])
@@ -70,7 +71,19 @@ const zoom = d3.zoom()
 const xAxisContext = d3.axisBottom(x2);
 const yAxisContext = d3.axisLeft(lineScaleY).ticks(2);
 
-/** --- INITIALIZING SVG CONTAINERS --- */
+
+/** --- GEOMETRY GENERATORS --- */
+
+const line = d3.line()
+  .x(function (d, i) { return x2(i); })
+  .y(function (d) { return lineScaleY(d.e); });
+
+const overviewLine = d3.line()
+  .x(function (d, i) { return overviewX(i); })
+  .y(function (d) { return overviewScaleY(d.e); });
+
+
+/** --- INITIALIZING CHART CONTAINERS --- */
 
 const overviewContainer = d3.select('#overview-container');
 
@@ -79,15 +92,6 @@ const overviewtainerSvg = overviewContainer.append('svg')
   .attr('height', overviewHeight + margin.top + margin.bottom)
   .append('g')
   .attr('transform', `translate(${margin.left}, ${margin.top})`);
-
-
-const overviewLine = d3.line()
-  .x(function (d, i) { return overviewX(i); })
-  .y(function (d) { return overviewScaleY(d.e); });
-
-const line = d3.line()
-  .x(function (d, i) { return x2(i); })
-  .y(function (d) { return lineScaleY(d.e); });
 
 overviewtainerSvg.append('defs').append('clipPath')
   .attr('id', 'clip')
@@ -98,11 +102,23 @@ overviewtainerSvg.append('defs').append('clipPath')
 const overview = overviewtainerSvg.append('g')
   .attr('class', 'overview');
 
+const canvas = d3.select('#container')
+  .append('canvas')
+  .attr('width', width)
+  .attr('height', height);
+
+d3.select('#container').style('margin-left', margin.left);
+
+const customBase = document.createElement('custom');
+const custom = d3.select(customBase);
+
 
 /** --- INITIALIZE DATA VARS --- */
-
 let gData = [];
 let entropyData = [];
+
+
+/** --------- DATA BINDING --------- */
 
 function databind(data) {
   const join = custom.selectAll('custom.rect')
@@ -135,6 +151,9 @@ function databind(data) {
     .remove();
 }
 
+
+/** --------- DRAWING TO CANVAS --------- */
+
 function draw(_canvas) {
   const context = _canvas.node().getContext('2d');
   context.clearRect(0, 0, width, height);
@@ -147,6 +166,11 @@ function draw(_canvas) {
   });
 }
 
+
+/** --------- INIT --------- */
+// TO DO: 'init' is a very generic name, all of this basically
+// draws graphics. Consider another name?
+
 function init() {
   const seqLength = entropyData.length;
   x2.domain([0, seqLength])
@@ -156,13 +180,6 @@ function init() {
     .range([0, overviewWidth]);
 
   squareWidth = width / seqLength;
-  // const line = d3.line()
-  //   .x(function(d, i) { return x2(i); })
-  //   .y(function (d) { return lineScaleY(d.e); });
-
-  // const overviewLine = d3.line()
-  //   .x(function (d, i) { return x2(i); })
-  //   .y(function (d) { return overviewScaleY(d.e); });
 
   // TOP brush
   const contextContainer = d3.select('#brush-container');
@@ -175,7 +192,8 @@ function init() {
 
   const brush = d3.brushX()
     .extent([[0, 0], [brushWidth, brushHeight]])
-    .on('end', brushed);
+    .on('end', brushed)
+    .on('brush', brushedForOverview);
 
   const context = contextContainerSvg.append('g')
     .attr('class', 'mainContext');
@@ -204,14 +222,6 @@ function init() {
     .call(brush.move, xScale.range());
 
   // MIDDLE 'OVERVIEW'
-  // overviewtainerSvg.append('defs').append('clipPath')
-  //   .attr('id', 'clip')
-  //   .append('rect')
-  //   .attr('width', overviewWidth)
-  //   .attr('height', overviewHeight);
-
-  // const overview = overviewtainerSvg.append('g')
-  //   .attr('class', 'overview');
 
   overview.append('path')
     .datum(entropyData)
@@ -227,32 +237,34 @@ function init() {
     .attr('class', 'zoom')
     .attr('width', width)
     .attr('height', height)
-    // .attr('transform', `translate(${margin.left}, ${margin.top})`)
     .call(zoom);
 }
 
 function rangeData(p1, p2) {
-  // const nData = filter(gData, function(i) { return (i.pos > p1 && i.pos < p2); });
+  // TODO FIX SINTAX const nData = filter(gData, function(i) { return (i.pos > p1 && i.pos < p2); });
   const nData = filter(gData, o => { return (o.pos > p1 && o.pos < p2); });
   return nData;
 }
 
+/* Update the range of the Overview line chart on 'brush' as opposed to
+on 'end' to enchance the usability.*/
+function brushedForOverview() {
+  const s = d3.event.selection;
+  if (d3.event.sourceEvent && d3.event.sourceEvent.type === 'zoom') return;
+  overviewX.domain(s.map(x2.invert, x2));
+  overview.select('.overviewPath').attr('d', overviewLine);
+  overviewtainerSvg.select('.zoom').call(zoom.transform, d3.zoomIdentity
+    .scale(overviewWidth / (s[1] - s[0]))
+    .translate(-s[0], 0));
+}
+
+/* Update the alingment chart on brush 'end'*/
 function brushed() {
   if (d3.event.sourceEvent && d3.event.sourceEvent.type === 'zoom') return;
   const s = d3.event.selection;
   const newRange = s.map((x2.invert));
   const lower = Math.round(newRange[0]);
   const upper = Math.round(newRange[1]);
-
-  console.log(overview.select('.overviewPath'));
-
-  overviewX.domain(s.map(x2.invert, x2));
-  overview.select('.overviewPath').attr('d', overviewLine);
-  // overview.select('.axis--x').call(xAxis);
-
-  overviewtainerSvg.select('.zoom').call(zoom.transform, d3.zoomIdentity
-    .scale(overviewWidth / (upper - lower))
-    .translate(-s[0], 0));
 
   squareWidth = width / (upper - lower);
   xScale.domain(s.map(x2.invert, x2));
@@ -266,6 +278,7 @@ function brushed() {
   });
 }
 
+// TO DO: esto es un desorden! :D
 function zoomed() {
   console.log('i is zooming');
   if (d3.event.sourceEvent && d3.event.sourceEvent.type === 'brush') return; // ignore zoom-by-brush
@@ -280,8 +293,5 @@ axios.get('api/entropy')
   .then((response) => {
     gData = response.data[0];
     entropyData = response.data[1];
-    console.log('max: ', d3.max(entropyData, function (d) { return d.e; }));
-    console.log('mean: ', d3.min(entropyData, function (d) { return d.e; }));
-    console.log('median: ', d3.median(entropyData, function (d) { return d.e; }));
     init();
   });
