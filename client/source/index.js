@@ -1,6 +1,8 @@
 import axios from 'axios';
 import * as d3 from 'd3';
 import { filter } from 'lodash';
+import { getState, dispatch } from './store';
+import actions from './actions/index';
 import './style.scss';
 
 console.log(__ENV__);
@@ -75,13 +77,12 @@ const yAxisContext = d3.axisLeft(lineScaleY).ticks(2);
 /** --- GEOMETRY GENERATORS --- */
 
 const line = d3.line()
-  .x(function (d, i) { return x2(i); })
-  .y(function (d) { return lineScaleY(d.e); });
+  .x((d, i) => x2(i))
+  .y(d => lineScaleY(d.e));
 
 const overviewLine = d3.line()
-  .x(function (d, i) { return overviewX(i); })
-  .y(function (d) { return overviewScaleY(d.e); });
-
+  .x((d, i) => overviewX(i))
+  .y(d => overviewScaleY(d.e));
 
 /** --- INITIALIZING CHART CONTAINERS --- */
 
@@ -172,6 +173,9 @@ function draw(_canvas) {
 // draws graphics. Consider another name?
 
 function init() {
+  setTimeout(() => {
+    dispatch(actions.setNombre('Carlos'));
+  }, 5000);
   const seqLength = entropyData.length;
   x2.domain([0, seqLength])
     .range([0, width]);
@@ -278,7 +282,7 @@ function brushed() {
   });
 }
 
-// TO DO: esto es un desorden! :D
+// TO DO: esto es un desorden! :D .|.
 function zoomed() {
   console.log('i is zooming');
   if (d3.event.sourceEvent && d3.event.sourceEvent.type === 'brush') return; // ignore zoom-by-brush
