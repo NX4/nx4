@@ -6,16 +6,27 @@ import './style.scss';
 console.log(__ENV__);
 
 /** --- DIMENSIONS + MISC --- */
+/* The interface is composed of:
+- brush (brush) - d3
+- zoomed area (overview) - d3
+- alignment view (focus) - canvas
+*/
 const margin = { top: 20, right: 20, bottom: 20, left: 20 };
 const width = d3.select('#chart_container').node().getBoundingClientRect().width - margin.left - margin.right;
 const height = 200 - margin.top - margin.bottom;
 
+const brushWidth = d3.select('#brush-container').node().getBoundingClientRect().width - margin.left - margin.right;
 const brushHeight = d3.select('#brush-container').node().getBoundingClientRect().height - margin.top - margin.bottom;
+
+const overviewWidth = d3.select('#overview-container').node().getBoundingClientRect().width - margin.left - margin.right;
+const overviewHeight = d3.select('#overview-container').node().getBoundingClientRect().height - margin.top - margin.bottom;
 
 const canvas = d3.select('#container')
   .append('canvas')
   .attr('width', width)
   .attr('height', height);
+
+d3.select('#container').style('margin-left', margin.left);
 
 const customBase = document.createElement('custom');
 const custom = d3.select(customBase);
@@ -33,6 +44,8 @@ const xScale = d3.scaleLinear()
 
 const x2 = d3.scaleLinear();
 
+const overviewX = d3.scaleLinear();
+
 const color = d3.scaleLinear()
   .domain([0, 100])
   .interpolate(d3.interpolateHcl)
@@ -42,9 +55,49 @@ const lineScaleY = d3.scaleLinear()
   .domain([0, 2]) // TODO, depends on base of LOG used for entropy
   .range([brushHeight - 0, 0]);
 
+const overviewScaleY = d3.scaleLinear()
+  .domain([0, 2]) // TODO, depends on base of LOG used for entropy
+  .range([overviewHeight - 0, 0]);
+
+const zoom = d3.zoom()
+  .scaleExtent([1, Infinity])
+  .translateExtent([[0, 0], [overviewWidth, overviewHeight]])
+  .extent([[0, 0], [overviewWidth, overviewHeight]])
+  .on('zoom', zoomed);
+
 /** --- AXES --- */
+
 const xAxisContext = d3.axisBottom(x2);
 const yAxisContext = d3.axisLeft(lineScaleY).ticks(2);
+
+/** --- INITIALIZING SVG CONTAINERS --- */
+
+const overviewContainer = d3.select('#overview-container');
+
+const overviewtainerSvg = overviewContainer.append('svg')
+  .attr('width', overviewWidth + margin.left + margin.right)
+  .attr('height', overviewHeight + margin.top + margin.bottom)
+  .append('g')
+  .attr('transform', `translate(${margin.left}, ${margin.top})`);
+
+
+const overviewLine = d3.line()
+  .x(function (d, i) { return overviewX(i); })
+  .y(function (d) { return overviewScaleY(d.e); });
+
+const line = d3.line()
+  .x(function (d, i) { return x2(i); })
+  .y(function (d) { return lineScaleY(d.e); });
+
+overviewtainerSvg.append('defs').append('clipPath')
+  .attr('id', 'clip')
+  .append('rect')
+  .attr('width', overviewWidth)
+  .attr('height', overviewHeight);
+
+const overview = overviewtainerSvg.append('g')
+  .attr('class', 'overview');
+
 
 /** --- INITIALIZE DATA VARS --- */
 
@@ -99,22 +152,29 @@ function init() {
   x2.domain([0, seqLength])
     .range([0, width]);
 
-  squareWidth = width / seqLength;
-  const line = d3.line()
-    .x(function(d, i) { return x2(i); })
-    .y(function (d) { return lineScaleY(d.e); });
+  overviewX.domain([0, seqLength])
+    .range([0, overviewWidth]);
 
-  // Context SVG (top brush)
+  squareWidth = width / seqLength;
+  // const line = d3.line()
+  //   .x(function(d, i) { return x2(i); })
+  //   .y(function (d) { return lineScaleY(d.e); });
+
+  // const overviewLine = d3.line()
+  //   .x(function (d, i) { return x2(i); })
+  //   .y(function (d) { return overviewScaleY(d.e); });
+
+  // TOP brush
   const contextContainer = d3.select('#brush-container');
 
   const contextContainerSvg = contextContainer.append('svg')
-    .attr('width', width + margin.left + margin.right)
+    .attr('width', brushWidth + margin.left + margin.right)
     .attr('height', brushHeight + margin.top + margin.bottom)
     .append('g')
     .attr('transform', `translate(${margin.left}, ${margin.top})`);
 
   const brush = d3.brushX()
-    .extent([[0, 0], [width, brushHeight]])
+    .extent([[0, 0], [brushWidth, brushHeight]])
     .on('end', brushed);
 
   const context = contextContainerSvg.append('g')
@@ -135,8 +195,7 @@ function init() {
     .call(xAxisContext);
 
   context.append('g')
-    .attr('class', 'axis axis--x')
-    // .attr('transform', `translate(0, ${brushHeight})`)
+    .attr('class', 'axis axis--y')
     .call(yAxisContext);
 
   contextContainerSvg.append('g')
@@ -144,6 +203,32 @@ function init() {
     .call(brush)
     .call(brush.move, xScale.range());
 
+  // MIDDLE 'OVERVIEW'
+  // overviewtainerSvg.append('defs').append('clipPath')
+  //   .attr('id', 'clip')
+  //   .append('rect')
+  //   .attr('width', overviewWidth)
+  //   .attr('height', overviewHeight);
+
+  // const overview = overviewtainerSvg.append('g')
+  //   .attr('class', 'overview');
+
+  overview.append('path')
+    .datum(entropyData)
+    .attr('fill', 'none')
+    .attr('stroke', 'steelblue')
+    .attr('stroke-linejoin', 'round')
+    .attr('stroke-linecap', 'round')
+    .attr('stroke-width', 1.5)
+    .attr('class', 'overviewPath')
+    .attr('d', overviewLine);
+
+  overviewtainerSvg.append('rect')
+    .attr('class', 'zoom')
+    .attr('width', width)
+    .attr('height', height)
+    // .attr('transform', `translate(${margin.left}, ${margin.top})`)
+    .call(zoom);
 }
 
 function rangeData(p1, p2) {
@@ -158,10 +243,20 @@ function brushed() {
   const newRange = s.map((x2.invert));
   const lower = Math.round(newRange[0]);
   const upper = Math.round(newRange[1]);
-  
+
+  console.log(overview.select('.overviewPath'));
+
+  overviewX.domain(s.map(x2.invert, x2));
+  overview.select('.overviewPath').attr('d', overviewLine);
+  // overview.select('.axis--x').call(xAxis);
+
+  overviewtainerSvg.select('.zoom').call(zoom.transform, d3.zoomIdentity
+    .scale(overviewWidth / (upper - lower))
+    .translate(-s[0], 0));
+
   squareWidth = width / (upper - lower);
   xScale.domain(s.map(x2.invert, x2));
-  
+
   const newData = rangeData(lower, upper);
 
   databind(newData);
@@ -169,6 +264,16 @@ function brushed() {
     draw(canvas);
     if (elapsed > 600) t.stop();
   });
+}
+
+function zoomed() {
+  console.log('i is zooming');
+  if (d3.event.sourceEvent && d3.event.sourceEvent.type === 'brush') return; // ignore zoom-by-brush
+  const t = d3.event.transform;
+  overviewX.domain(t.rescaleX(x2).domain());
+  overviewtainerSvg.select('overviewPath').attr('d', line);
+  // overview.select(".axis--x").call(xAxis);
+  // context.select('.brush').call(brush.move, x.range().map(t.invertX, t));
 }
 
 axios.get('api/entropy')

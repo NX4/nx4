@@ -14,7 +14,31 @@ body {
   margin-bottom: 30px;
 }
 
+#overview-container {
+  width: 100%;
+  height: 200px;
+  margin-bottom: 30px;
+}
+
 #chart_container {
   width: 100%;
   // overflow-x: scroll;
+}
+
+.axis line,
+.axis path {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.zoom {
+  cursor: move;
+  fill: none;
+  pointer-events: all;
+}
+
+.overviewPath {
+  // fill: steelblue;
+  clip-path: url(#clip);
 }
