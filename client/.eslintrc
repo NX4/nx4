@@ -13,5 +13,9 @@
   },
   "globals": {
     "__ENV__": true
+  },
+  "rules": {
+    "no-unused-vars": "off",
+    "no-underscore-dangle": "off"
   }
 }

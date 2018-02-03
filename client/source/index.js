@@ -5,8 +5,12 @@ import { getState, dispatch } from './store';
 import actions from './actions/index';
 import './style.scss';
 
+import Context from './modules/context';
+
 console.log(__ENV__);
 
+
+const lineChart = Context();
 
 /*
 --- cAlign Developer notes ---
@@ -179,6 +183,8 @@ function init() {
   const seqLength = entropyData.length;
   x2.domain([0, seqLength])
     .range([0, width]);
+
+  d3.select('#test-contaner').datum(entropyData).call(lineChart);
 
   overviewX.domain([0, seqLength])
     .range([0, overviewWidth]);
