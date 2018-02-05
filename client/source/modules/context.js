@@ -5,8 +5,8 @@ function Context() {
   let W;
   let H;
   // const dis = d3.dispatch('countTrips');
-  let scaleX;
-  let scaleY;
+  const scaleX = d3.scaleLinear();
+  const scaleY = d3.scaleLinear();
 
   /**
   * exports() returns a new line chart
@@ -15,23 +15,26 @@ function Context() {
   function exports(selection) {
     W = W || selection.node().clientWidth - margin.l - margin.r;
     H = H || selection.node().clientHeight - margin.t - margin.b;
-    const lineData = selection.datum() ? selection.datum() : [];
+    let lineData = selection.datum() ? selection.datum() : [];
 
 
     // Scales
-    const contextX = d3.scaleLinear();
-    const contextY = d3.scaleLinear()
-      .domain([0, 2]) // TODO, depends on base of LOG used for entropy
-      .range([H, 0]);
+    scaleX
+      .range([0, W])
+      .domain([0, lineData.length]);
+
+    scaleY
+      .range([H, 0])
+      .domain([0, 2]); // TODO, depends on base of LOG used for entropy
 
     // Axes
-    const xAxisContext = d3.axisBottom(contextX);
-    const yAxisContext = d3.axisLeft(contextY).ticks(2);
+    const xAxisContext = d3.axisBottom(scaleX);
+    const yAxisContext = d3.axisLeft(scaleY).ticks(2);
 
     // Line generator
     const line = d3.line()
-      .x((d, i) => contextX(i))
-      .y(d => contextY(d.e));
+      .x((d, i) => scaleX(i))
+      .y(d => scaleY(d.e));
 
     // SVG initializer
     const svg = selection.selectAll('svg')
@@ -43,11 +46,11 @@ function Context() {
       .attr('height', H + margin.t + margin.b)
       .merge(svg)
         .append('g')
-        .attr('transform', `translate(${margin.left}, ${margin.top})`);
+        .attr('transform', `translate(${margin.l}, ${margin.t})`);
 
     const brush = d3.brushX()
       .extent([[0, 0], [W, H]])
-      .on('end', brushed)
+      .on('end', brushed);
       // .on('brush', brushedForOverview);
 
     const context = svgEnter.append('g')
@@ -74,12 +77,32 @@ function Context() {
     svgEnter.append('g')
       .attr('class', 'brush')
       .call(brush)
-      .call(brush.move, contextX.range());
+      .call(brush.move, scaleX.range());
 
-    console.log('Inside Context');
+    // Interactive functions
+    function brushed() {
+      if (d3.event.sourceEvent && d3.event.sourceEvent.type === 'zoom') return;
+      const s = d3.event.selection;
+      const newRange = s.map((scaleX.invert));
+      const lower = Math.round(newRange[0]);
+      const upper = Math.round(newRange[1]);
 
-    return exports;
+      // Reducer goes here...
+      
+      // squareWidth = W / (upper - lower);
+      // xScale.domain(s.map(x2.invert, x2));
+
+      // const newData = rangeData(lower, upper);
+
+      // databind(newData);
+      // const t = d3.timer((elapsed) => {
+      //   draw(canvas);
+      //   if (elapsed > 600) t.stop();
+      // });
+    }
   } // exports()
+
+  return exports;
 } // Context()
 
 export default Context;

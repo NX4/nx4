@@ -184,6 +184,8 @@ function init() {
   x2.domain([0, seqLength])
     .range([0, width]);
 
+  console.log('187', lineChart);
+
   d3.select('#test-contaner').datum(entropyData).call(lineChart);
 
   overviewX.domain([0, seqLength])
