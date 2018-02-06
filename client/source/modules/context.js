@@ -52,8 +52,8 @@ function Context() {
 
     const brush = d3.brushX()
       .extent([[0, 0], [W, H]])
-      .on('end', brushed); // eslint-disable-line
-      // .on('brush', brushedForOverview);
+      .on('end', brushed) // eslint-disable-line
+      .on('brush', brushedForOverview); // eslint-disable-line
 
     const context = svgEnter.append('g')
       .attr('class', 'mainContext');
@@ -86,22 +86,26 @@ function Context() {
       if (d3.event.sourceEvent && d3.event.sourceEvent.type === 'zoom') return;
       const s = d3.event.selection;
       const newRange = s.map((scaleX.invert));
-      const lower = Math.round(newRange[0]);
-      const upper = Math.round(newRange[1]);
+      // const lower = Math.round(newRange[0]);
+      // const upper = Math.round(newRange[1]);
       const domain = s.map(scaleX.invert, scaleX);
 
-      // Reducer goes here...
+      // Reducer
       dispatch(actions.updateRecs(newRange, domain));
+    }
 
-      // squareWidth = W / (upper - lower);
+    /* Update the range of the Overview line chart on 'brush' as opposed to
+    on 'end' to enchance the usability.*/
 
-      // const newData = rangeData(lower, upper);
+    function brushedForOverview() {
+      if (d3.event.sourceEvent && d3.event.sourceEvent.type === 'zoom') return;
+      const s = d3.event.selection;
 
-      // databind(newData);
-      // const t = d3.timer((elapsed) => {
-      //   draw(canvas);
-      //   if (elapsed > 600) t.stop();
-      // });
+      // overviewX.domain(s.map(x2.invert, x2));
+      // overview.select('.overviewPath').attr('d', overviewLine);
+      // overviewtainerSvg.select('.zoom').call(zoom.transform, d3.zoomIdentity
+      //   .scale(overviewWidth / (s[1] - s[0]))
+      //   .translate(-s[0], 0));
     }
   } // exports()
 
