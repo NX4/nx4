@@ -1,11 +1,14 @@
 
-function setNombre(nombre) {
+function updateRecs(range, domain) {
   return {
-    type: 'SET_NOMBRE',
-    payload: nombre,
+    type: 'UPDATE_RECS',
+    payload: {
+      range,
+      domain,
+    },
   };
 }
 
 export default {
-  setNombre,
+  updateRecs,
 };

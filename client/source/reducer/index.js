@@ -1,17 +1,8 @@
+import { combineReducers } from 'redux';
+import contextReducer from './brush';
 
-const initialState = {
-  nombre: '',
-};
+const reducer = combineReducers({
+  context: contextReducer,
+});
 
-function thingsReducer(state = initialState, action = {}) {
-  switch (action.type) {
-    case 'SET_NOMBRE':
-      return Object.assign({}, state, {
-        nombre: action.payload,
-      });
-    default:
-      return state;
-  }
-}
-
-module.exports = thingsReducer;
+export default reducer;

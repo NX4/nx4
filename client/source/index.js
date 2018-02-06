@@ -1,7 +1,7 @@
 import axios from 'axios';
 import * as d3 from 'd3';
 import { filter } from 'lodash';
-import { getState, dispatch } from './store';
+import { getState, dispatch, observe } from './store';
 import actions from './actions/index';
 import './style.scss';
 
@@ -177,9 +177,6 @@ function draw(_canvas) {
 // draws graphics. Consider another name?
 
 function init() {
-  setTimeout(() => {
-    dispatch(actions.setNombre('Carlos'));
-  }, 5000);
   const seqLength = entropyData.length;
   x2.domain([0, seqLength])
     .range([0, width]);
@@ -203,12 +200,28 @@ function init() {
     .attr('transform', `translate(${margin.left}, ${margin.top})`);
 
   const brush = d3.brushX()
-    .extent([[0, 0], [brushWidth, brushHeight]])
-    .on('end', brushed)
-    .on('brush', brushedForOverview);
+    .extent([[0, 0], [brushWidth, brushHeight]]);
+    // .on('end', brushed)
+    // .on('brush', brushedForOverview);
 
   const context = contextContainerSvg.append('g')
     .attr('class', 'mainContext');
+
+  const unsubscribe = observe(state => state.context, (state, nextSate) => {
+    const lower = Math.round(state.range[0]);
+    const upper = Math.round(state.range[1]);
+
+    squareWidth = width / (upper - lower);
+    xScale.domain(state.domain);
+
+    const newData = rangeData(lower, upper); // eslint-disable-line
+
+    databind(newData);
+    const t = d3.timer((elapsed) => {
+      draw(canvas);
+      if (elapsed > 600) t.stop();
+    });
+  });
 
   context.append('path')
     .datum(entropyData)

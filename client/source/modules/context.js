@@ -17,7 +17,7 @@ function Context() {
   function exports(selection) {
     W = W || selection.node().clientWidth - margin.l - margin.r;
     H = H || selection.node().clientHeight - margin.t - margin.b;
-    let lineData = selection.datum() ? selection.datum() : [];
+    const lineData = selection.datum() ? selection.datum() : [];
 
 
     // Scales
@@ -52,7 +52,7 @@ function Context() {
 
     const brush = d3.brushX()
       .extent([[0, 0], [W, H]])
-      .on('end', brushed);
+      .on('end', brushed); // eslint-disable-line
       // .on('brush', brushedForOverview);
 
     const context = svgEnter.append('g')
@@ -88,12 +88,12 @@ function Context() {
       const newRange = s.map((scaleX.invert));
       const lower = Math.round(newRange[0]);
       const upper = Math.round(newRange[1]);
+      const domain = s.map(scaleX.invert, scaleX);
 
       // Reducer goes here...
-      dispatch(actions.setNombre('Dispatcher inside a module on brushing'));
+      dispatch(actions.updateRecs(newRange, domain));
 
       // squareWidth = W / (upper - lower);
-      // xScale.domain(s.map(x2.invert, x2));
 
       // const newData = rangeData(lower, upper);
 
