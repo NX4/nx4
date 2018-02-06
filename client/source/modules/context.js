@@ -1,4 +1,6 @@
 import * as d3 from 'd3';
+import actions from '../actions/index';
+import { getState, dispatch } from '../store';
 
 function Context() {
   const margin = { t: 20, r: 20, b: 20, l: 20 };
@@ -88,7 +90,8 @@ function Context() {
       const upper = Math.round(newRange[1]);
 
       // Reducer goes here...
-      
+      dispatch(actions.setNombre('Dispatcher inside a module on brushing'));
+
       // squareWidth = W / (upper - lower);
       // xScale.domain(s.map(x2.invert, x2));
 
