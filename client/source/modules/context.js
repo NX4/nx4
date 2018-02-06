@@ -65,6 +65,7 @@ function Context() {
       .attr('stroke-linejoin', 'round')
       .attr('stroke-linecap', 'round')
       .attr('stroke-width', 1.5)
+      .attr('class', 'contextPath')
       .attr('d', line);
 
     context.append('g')
@@ -100,6 +101,11 @@ function Context() {
     function brushedForOverview() {
       if (d3.event.sourceEvent && d3.event.sourceEvent.type === 'zoom') return;
       const s = d3.event.selection;
+      const newRange = s.map((scaleX.invert));
+      const domain = s.map(scaleX.invert, scaleX);
+
+      // Reducer
+      dispatch(actions.updateFocus(newRange, domain));
 
       // overviewX.domain(s.map(x2.invert, x2));
       // overview.select('.overviewPath').attr('d', overviewLine);

@@ -127,7 +127,7 @@ function init() {
       if (elapsed > 600) t.stop();
     });
   });
-}
+} // init()
 
 function rangeData(p1, p2) {
 // TODO FIX SINTAX const nData = filter(gData, function(i) { return (i.pos > p1 && i.pos < p2); });

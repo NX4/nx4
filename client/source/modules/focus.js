@@ -1,6 +1,6 @@
 import * as d3 from 'd3';
 import actions from '../actions/index';
-import { getState, dispatch } from '../store';
+import { getState, dispatch, observe } from '../store';
 
 function Focus() {
   const margin = { t: 20, r: 20, b: 20, l: 20 };
@@ -16,6 +16,8 @@ function Focus() {
     .extent([[0, 0], [W, H]])
     .on('zoom', zoomed);
 
+
+
   /**
   * exports() returns a new line chart
   * based on the passed-in d3 selection
@@ -25,11 +27,12 @@ function Focus() {
     H = H || selection.node().clientHeight - margin.t - margin.b;
     const lineData = selection.datum() ? selection.datum() : [];
 
-
     // Scales
     scaleX
       .range([0, W])
       .domain([0, lineData.length]);
+
+    console.log(lineData.length);
 
     scaleY
       .range([H, 0])
@@ -40,7 +43,7 @@ function Focus() {
     const yAxis = d3.axisLeft(scaleY).ticks(2);
 
     // Line generator
-    const line = d3.line()
+    const lines = d3.line()
       .x((d, i) => scaleX(i))
       .y(d => scaleY(d.e));
 
@@ -62,22 +65,19 @@ function Focus() {
       .attr('width', W)
       .attr('height', H);
 
-    // const brush = d3.brushX()
-    //   .extent([[0, 0], [W, H]])
-    //   .on('end', brushed); // eslint-disable-line
-    // // .on('brush', brushedForOverview);
-
     const focus = svgEnter.append('g')
       .attr('class', 'focus');
-
+    
     focus.append('path')
       .datum(lineData)
+      .attr('class', 'focusPath')
+      .attr('id', 'someid')
       .attr('fill', 'none')
       .attr('stroke', 'steelblue')
       .attr('stroke-linejoin', 'round')
       .attr('stroke-linecap', 'round')
       .attr('stroke-width', 1.5)
-      .attr('d', line);
+      .attr('d', lines);
 
     focus.append('g')
       .attr('class', 'axis axis--x')
@@ -88,18 +88,24 @@ function Focus() {
       .attr('class', 'axis axis--y')
       .call(yAxis);
 
-    focus.append('rect')
+    svgEnter.append('rect')
       .attr('class', 'zoom')
       .attr('width', W)
       .attr('height', H)
       .call(zoom);
 
-    // svgEnter.append('g')
-    //   .attr('class', 'brush')
-    //   .call(brush)
-    //   .call(brush.move, scaleX.range());
+    const unsubscribe = observe(state => state.focus, (state, nextSate) => {
+      const lower = Math.round(state.range[0]);
+      const upper = Math.round(state.range[1]);
 
-    // Interactive functions
+      scaleX.domain(state.domain);
+      d3.select('#someid').attr('d', lines);
+      focus.select('.axis--x').call(xAxis);
+
+      // svgEnter.select('.zoom').call(zoom.transform, d3.zoomIdentity
+      //   .scale(W / (upper - lower))
+      //   .translate(-lower, 0));
+    });
   } // exports()
 
   function zoomed() {
