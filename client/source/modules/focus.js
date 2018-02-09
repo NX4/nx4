@@ -16,7 +16,7 @@ function Focus() {
     .extent([[0, 0], [W, H]])
     .on('zoom', zoomed);
 
-  const bisectPosition = d3.bisector(function (d, i) { return d.i; }).left;
+  const bisectPosition = d3.bisector(d => d.i).left;
 
   /**
   * exports() returns a new line chart
@@ -27,14 +27,10 @@ function Focus() {
     H = H || selection.node().clientHeight - margin.t - margin.b;
     const lineData = selection.datum() ? selection.datum() : [];
 
-    console.log(lineData);
-
     // Scales
     scaleX
       .range([0, W])
       .domain([0, lineData.length]);
-
-    console.log(lineData.length);
 
     scaleY
       .range([H, 0])
@@ -46,27 +42,20 @@ function Focus() {
 
     // Line generator
     const lines = d3.line()
-      .x((d, i) => scaleX(i))
+      .x(d => scaleX(d.i))
       .y(d => scaleY(d.e))
       .curve(d3.curveStepAfter);
 
     // Bisecting
     function mouseMove() {
       const x0 = scaleX.invert(d3.mouse(this)[0]);
-
-      // our problem is the bisect function!!
-      // TODO FIX
-      const i = bisectPosition(lineData, x0, 1, 14000);
+      const i = bisectPosition(lineData, x0, 1);
       const d0 = lineData[i - 1];
       const d1 = lineData[i];
       const d = x0 - d0.i > d1.i - x0 ? d1 : d0;
 
-      console.log(x0, i, d.e);
-
-      tooltip.select('circle.y')
-        .attr('transform',
-        'translate(' + scaleX(x0) + ',' +
-        scaleY(d.e) + ')');
+      tooltip.select('circle.y') // eslint-disable-line
+        .attr('transform', `translate(${scaleX(d.i)}, ${scaleY(d.e)})`);
     }
 
     // SVG initializer
@@ -86,8 +75,7 @@ function Focus() {
 
     tooltip.append('circle')
       .attr('class', 'y')
-      .style('fill', 'none')
-      .style('stroke', 'blue')
+      .style('fill', 'red')
       .attr('r', 4);
 
     svgEnter.append('defs').append('clipPath')
