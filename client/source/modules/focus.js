@@ -16,7 +16,7 @@ function Focus() {
     .extent([[0, 0], [W, H]])
     .on('zoom', zoomed);
 
-
+  const bisectPosition = d3.bisector(function (d, i) { return d.i; }).left;
 
   /**
   * exports() returns a new line chart
@@ -26,6 +26,8 @@ function Focus() {
     W = W || selection.node().clientWidth - margin.l - margin.r;
     H = H || selection.node().clientHeight - margin.t - margin.b;
     const lineData = selection.datum() ? selection.datum() : [];
+
+    console.log(lineData);
 
     // Scales
     scaleX
@@ -45,7 +47,27 @@ function Focus() {
     // Line generator
     const lines = d3.line()
       .x((d, i) => scaleX(i))
-      .y(d => scaleY(d.e));
+      .y(d => scaleY(d.e))
+      .curve(d3.curveStepAfter);
+
+    // Bisecting
+    function mouseMove() {
+      const x0 = scaleX.invert(d3.mouse(this)[0]);
+
+      // our problem is the bisect function!!
+      // TODO FIX
+      const i = bisectPosition(lineData, x0, 1, 14000);
+      const d0 = lineData[i - 1];
+      const d1 = lineData[i];
+      const d = x0 - d0.i > d1.i - x0 ? d1 : d0;
+
+      console.log(x0, i, d.e);
+
+      tooltip.select('circle.y')
+        .attr('transform',
+        'translate(' + scaleX(x0) + ',' +
+        scaleY(d.e) + ')');
+    }
 
     // SVG initializer
     const svg = selection.selectAll('svg')
@@ -59,6 +81,15 @@ function Focus() {
       .append('g')
       .attr('transform', `translate(${margin.l}, ${margin.t})`);
 
+    const tooltip = svgEnter.append('g')
+      .style('display', 'none');
+
+    tooltip.append('circle')
+      .attr('class', 'y')
+      .style('fill', 'none')
+      .style('stroke', 'blue')
+      .attr('r', 4);
+
     svgEnter.append('defs').append('clipPath')
       .attr('id', 'clip')
       .append('rect')
@@ -67,7 +98,7 @@ function Focus() {
 
     const focus = svgEnter.append('g')
       .attr('class', 'focus');
-    
+
     focus.append('path')
       .datum(lineData)
       .attr('class', 'focusPath')
@@ -76,7 +107,7 @@ function Focus() {
       .attr('stroke', 'steelblue')
       .attr('stroke-linejoin', 'round')
       .attr('stroke-linecap', 'round')
-      .attr('stroke-width', 1.5)
+      .attr('stroke-width', 1)
       .attr('d', lines);
 
     focus.append('g')
@@ -93,6 +124,15 @@ function Focus() {
       .attr('width', W)
       .attr('height', H)
       .call(zoom);
+
+    svgEnter.append('rect')
+      .attr('width', W)
+      .attr('height', H)
+      .style('fill', 'none')
+      .style('pointer-events', 'all')
+      .on('mouseover', () => { tooltip.style('display', null); })
+      .on('mouseout', () => { tooltip.style('display', 'none'); })
+      .on('mousemove', mouseMove);
 
     const unsubscribe = observe(state => state.focus, (state, nextSate) => {
       const lower = Math.round(state.range[0]);
@@ -112,9 +152,6 @@ function Focus() {
     console.log('zooming from inside a module');
     if (d3.event.sourceEvent && d3.event.sourceEvent.type === 'brush') return; // ignore zoom-by-brush
     const t = d3.event.transform;
-
-    // Reducer
-    // dispatch(actions.updateRecs(newRange, domain));
 
     // overviewX.domain(t.rescaleX(x2).domain());
     // overviewtainerSvg.select('overviewPath').attr('d', line);

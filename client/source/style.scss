@@ -20,12 +20,6 @@ body {
   margin-bottom: 30px;
 }
 
-#test-contaner {
-  width: 100%;
-  height: 200px;
-  margin-bottom: 30px;
-}
-
 #chart_container {
   width: 100%;
   // overflow-x: scroll;
@@ -34,7 +28,7 @@ body {
 .axis line,
 .axis path {
   fill: none;
-  stroke: #000;
+  stroke: #666;
   shape-rendering: crispEdges;
 }
 

@@ -135,17 +135,6 @@ function rangeData(p1, p2) {
   return nData;
 }
 
-// TO DO: esto es un desorden! :D .|.
-// function zoomed() {
-//   console.log('i is zooming');
-//   if (d3.event.sourceEvent && d3.event.sourceEvent.type === 'brush') return; // ignore zoom-by-brush
-//   const t = d3.event.transform;
-//   overviewX.domain(t.rescaleX(x2).domain());
-//   overviewtainerSvg.select('overviewPath').attr('d', line);
-//   // overview.select(".axis--x").call(xAxis);
-//   // context.select('.brush').call(brush.move, x.range().map(t.invertX, t));
-// }
-
 axios.get('api/entropy')
   .then((response) => {
     gData = response.data[0];
