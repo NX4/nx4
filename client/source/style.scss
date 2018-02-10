@@ -28,7 +28,7 @@ body {
 .axis line,
 .axis path {
   fill: none;
-  stroke: #000;
+  stroke: #666;
   shape-rendering: crispEdges;
 }
 
@@ -38,7 +38,7 @@ body {
   pointer-events: all;
 }
 
-.overviewPath {
+#someid {
   // fill: steelblue;
   clip-path: url(#clip);
 }
