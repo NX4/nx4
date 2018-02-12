@@ -27,7 +27,7 @@ function applyPercentage(obj) {
 
 function parseData(array) {
     return new Promise(resolve => {
-        const response = [];
+        const positionData = [];
         const entropy = [];
         for (let i = 0; i < array[0].length; i++) {
             const obj = {
@@ -46,12 +46,12 @@ function parseData(array) {
                     if (obj[key] !== 0) {
                         vEntropy += ( (obj[key]/100) * Math.log2(obj[key]/100) );
                     }
-                    response.push(res);
+                    positionData.push(res);
                 }
                 entropy.push({i, e: vEntropy * -1});
             })
         }
-        resolve([response, entropy]);
+        resolve([positionData, entropy]);
     })
 }
 
