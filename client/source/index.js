@@ -31,11 +31,6 @@ const yScale = d3.scaleOrdinal()
 const xScale = d3.scaleLinear()
   .range([0, width]);
 
-// const color = d3.scaleLinear()
-//   .domain([0, 100])
-//   .interpolate(d3.interpolateHcl)
-//   .range([d3.rgb('#e6e6e6'), d3.rgb('#000')]);
-
 const color = d3.scaleLinear()
   .domain([1, 50, 99])
   .interpolate(d3.interpolateHcl)
