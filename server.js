@@ -12,8 +12,6 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname + '/client/built/static/index.html'));
 });
 
-// controllers.fasta();
-
 const port = process.env.PORT || 8000;
 app.listen(port);
 
