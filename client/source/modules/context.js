@@ -77,10 +77,15 @@ function Context() {
       .attr('class', 'axis axis--y')
       .call(yAxisContext);
 
-    svgEnter.append('g')
+    const brushEl = svgEnter.append('g')
       .attr('class', 'brush')
       .call(brush)
       .call(brush.move, scaleX.range());
+
+    // d3.select('body').on('click', function (d) {
+    //   console.log('click');
+    //   aBrush.call(brush.move, [200, 600].map(scaleX));
+    // });
 
     // Interactive functions
     function brushed() {

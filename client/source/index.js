@@ -31,11 +31,15 @@ const yScale = d3.scaleOrdinal()
 const xScale = d3.scaleLinear()
   .range([0, width]);
 
-const color = d3.scaleLinear()
-  .domain([0, 100])
-  .interpolate(d3.interpolateHcl)
-  .range([d3.rgb('#e6e6e6'), d3.rgb('#000')]);
+// const color = d3.scaleLinear()
+//   .domain([0, 100])
+//   .interpolate(d3.interpolateHcl)
+//   .range([d3.rgb('#e6e6e6'), d3.rgb('#000')]);
 
+const color = d3.scaleLinear()
+  .domain([1, 50, 99])
+  .interpolate(d3.interpolateHcl)
+  .range([d3.rgb('#f3cbd3'), d3.rgb('#6c2167'), d3.rgb('#f3cbd3')]);
 
 /** --- INITIALIZING CHART CONTAINERS --- */
 const canvas = d3.select('#container')
@@ -67,7 +71,11 @@ function databind(data) {
     .attr('y', function(d) {
       return yScale(d.type);
     })
-    .attr('fillStyle', function(d) { return color(d.value); })
+    .attr('fillStyle', (d) => {
+      if (d.value < color.domain()[0] || d.value > color.domain()[2]) {
+        return '#E0E0E0';
+      } return color(d.value);
+    })
     .attr('width', 0)
     .attr('height', 0);
   join
@@ -78,7 +86,11 @@ function databind(data) {
     })
     .attr('width', squareWidth)
     .attr('height', 20)
-    .attr('fillStyle', function(d) { return color(d.value); });
+    .attr('fillStyle', (d) => {
+      if (d.value < color.domain()[0] || d.value > color.domain()[2]) {
+        return '#E0E0E0';
+      } return color(d.value);
+    });
 
   const exitSel = join.exit()
     .transition()
