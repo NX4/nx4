@@ -10,18 +10,8 @@ function Focus() {
   const scaleX = d3.scaleLinear();
   const scaleY = d3.scaleLinear();
 
-  const zoom = d3.zoom()
-    .scaleExtent([1, Infinity])
-    .translateExtent([[0, 0], [W, H]])
-    .extent([[0, 0], [W, H]])
-    .on('zoom', zoomed);
-
   const bisectPosition = d3.bisector(d => d.i).left;
 
-  /**
-  * exports() returns a new line chart
-  * based on the passed-in d3 selection
-  */
   function exports(selection) {
     W = W || selection.node().clientWidth - margin.l - margin.r;
     H = H || selection.node().clientHeight - margin.t - margin.b;
@@ -108,12 +98,6 @@ function Focus() {
       .call(yAxis);
 
     svgEnter.append('rect')
-      .attr('class', 'zoom')
-      .attr('width', W)
-      .attr('height', H)
-      .call(zoom);
-
-    svgEnter.append('rect')
       .attr('width', W)
       .attr('height', H)
       .style('fill', 'none')
@@ -129,25 +113,10 @@ function Focus() {
       scaleX.domain(state.domain);
       d3.select('#someid').attr('d', lines);
       focus.select('.axis--x').call(xAxis);
-
-      // svgEnter.select('.zoom').call(zoom.transform, d3.zoomIdentity
-      //   .scale(W / (upper - lower))
-      //   .translate(-lower, 0));
     });
-  } // exports()
-
-  function zoomed() {
-    console.log('zooming from inside a module');
-    if (d3.event.sourceEvent && d3.event.sourceEvent.type === 'brush') return; // ignore zoom-by-brush
-    const t = d3.event.transform;
-
-    // overviewX.domain(t.rescaleX(x2).domain());
-    // overviewtainerSvg.select('overviewPath').attr('d', line);
-    // overview.select(".axis--x").call(xAxis);
-    // context.select('.brush').call(brush.move, x.range().map(t.invertX, t));
   }
 
   return exports;
-} // Focus()
+}
 
 export default Focus;

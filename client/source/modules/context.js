@@ -1,6 +1,6 @@
 import * as d3 from 'd3';
 import actions from '../actions/index';
-import { getState, dispatch } from '../store';
+import { getState, dispatch, observe } from '../store';
 
 function Context() {
   const margin = { t: 20, r: 20, b: 20, l: 20 };
@@ -78,13 +78,11 @@ function Context() {
 
     const brushEl = svgEnter.append('g')
       .attr('class', 'brush')
-      .call(brush)
-      .call(brush.move, scaleX.range());
+      .call(brush);
 
-    // d3.select('body').on('click', function (d) {
-    //   console.log('click');
-    //   aBrush.call(brush.move, [200, 600].map(scaleX));
-    // });
+    const unsubscribe = observe(state => state.alignment, (state) => {
+      brushEl.call(brush.move, [0, state.rectCount].map(scaleX));
+    });
 
     // Interactive functions
     function brushed() {
@@ -96,7 +94,7 @@ function Context() {
       const domain = s.map(scaleX.invert, scaleX);
 
       // Reducer
-      dispatch(actions.updateRecs(newRange, domain));
+      // dispatch(actions.updateRecs(newRange, domain));
     }
 
     /* Update the range of the Overview line chart on 'brush' as opposed to
@@ -110,7 +108,7 @@ function Context() {
 
       // Reducer
       dispatch(actions.updateFocus(newRange, domain));
-
+      dispatch(actions.updateRecs(newRange, domain));
       // overviewX.domain(s.map(x2.invert, x2));
       // overview.select('.overviewPath').attr('d', overviewLine);
       // overviewtainerSvg.select('.zoom').call(zoom.transform, d3.zoomIdentity

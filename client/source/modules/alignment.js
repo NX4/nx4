@@ -1,6 +1,7 @@
 import * as d3 from 'd3';
+import { filter as _filter } from 'lodash';
 import actions from '../actions/index';
-import { getState, dispatch } from '../store';
+import { getState, dispatch, observe } from '../store';
 
 function Alignment() {
   const margin = { t: 20, r: 20, b: 20, l: 20 };
@@ -31,7 +32,7 @@ function Alignment() {
     totalRects = Math.floor(W / rectWidth);
     scaleXDomain = Math.floor(alignData.length / aminos.length);
 
-    console.log(totalRects);
+    dispatch(actions.setRectCount(totalRects));
 
     // Scales
     scaleX
@@ -66,9 +67,7 @@ function Alignment() {
       .attr('x', d => scaleX(d.pos))
       .attr('width', rectWidth)
       .attr('height', rectWidth)
-      .attr('y', function (d) {
-        return scaleY(d.type);
-      })
+      .attr('y', d => scaleY(d.type))
       .attr('fill', (d) => {
         if (d.value < color.domain()[0] || d.value > color.domain()[2]) {
           return '#E0E0E0';
@@ -76,36 +75,24 @@ function Alignment() {
       })
       .on('mouseover', d => console.log(d));
 
-    d3.select('body').on('click', function (d) {
-      console.log('click', basepairsEnter);
-      basepairsEnter.data(alignData.slice(139, 829));
+    const unsubscribe = observe(state => state.focus, (state, nextSate) => {
+      const lower = Math.round(state.range[0]);
+      const upper = Math.round(state.range[1]);
 
-      basepairsEnter.transition().duration(500)
+      const filteredData = _filter(alignData, o => o.pos >= lower && o.pos < upper);
+
+      basepairsEnter.data(filteredData);
+
+      basepairsEnter.transition().duration(10)
       .attr('fill', (d) => {
         if (d.value < color.domain()[0] || d.value > color.domain()[2]) {
           return '#E0E0E0';
         } return color(d.value);
       });
     });
-
-    // context.append('g')
-    //   .attr('class', 'axis axis--x')
-    //   .attr('transform', `translate(0, ${H})`)
-    //   .call(xAxisContext);
-
-    // context.append('g')
-    //   .attr('class', 'axis axis--y')
-    //   .call(yAxisContext);
-
-
-    // Interactive functions
-
-
-      // Reducer
-      // dispatch(actions.updateRecs(newRange, domain));
-  } // exports()
+  }
 
   return exports;
-} // Context()
+}
 
 export default Alignment;
