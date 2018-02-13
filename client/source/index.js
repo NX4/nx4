@@ -7,10 +7,12 @@ import './style.scss';
 
 import Context from './modules/context';
 import Focus from './modules/focus';
+import Alignment from './modules/alignment';
 
 // console.log(__ENV__);
 const lineChart = Context();
 const focusChart = Focus();
+const alignmentChart = Alignment();
 
 /** --- DIMENSIONS --- */
 
@@ -117,6 +119,7 @@ function draw(_canvas) {
 function init() {
   d3.select('#brush-container').datum(entropyData).call(lineChart);
   d3.select('#overview-container').datum(entropyData).call(focusChart);
+  d3.select('#test-container').datum(gData).call(alignmentChart);
 
   // Global event handling
   const unsubscribe = observe(state => state.context, (state, nextSate) => {

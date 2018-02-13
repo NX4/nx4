@@ -25,6 +25,11 @@ body {
   // overflow-x: scroll;
 }
 
+#test-container {
+    width: 100%;
+    height: 400px;
+}
+
 .axis line,
 .axis path {
   fill: none;

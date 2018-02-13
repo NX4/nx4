@@ -6,7 +6,6 @@ function Context() {
   const margin = { t: 20, r: 20, b: 20, l: 20 };
   let W;
   let H;
-  // const dis = d3.dispatch('countTrips');
   const scaleX = d3.scaleLinear();
   const scaleY = d3.scaleLinear();
 
