@@ -28,6 +28,6 @@ To run you must run both the backend and the client servers. Execute `npm run de
 The current dataset is: TODO –> ask Shirlee for link to dataset.
 
 ### Authors and acknowledgments
-This tool was developed by Antonio Solano-Roman (hci, data visualization, usability, front-end) and Carlos Cruz-Castillo (back-end, data/state management and architecture, front-end), with the invaluable advice of Dietmar Offenhuber (information design) and Andrés Colubri (statistical analysis and information design). 
+This tool was developed by Antonio Solano-Roman (hci, data visualization, usability, front-end) and Carlos Cruz-Castillo (back-end, data/state management and architecture, front-end), with the invaluable advice of Dietmar Offenhuber (information design, hci) and Andrés Colubri (statistical analysis and information design). 
 
 The data was kindly provided by the Sabeti Lab at the Broad Institute of MIT and Harvard.
