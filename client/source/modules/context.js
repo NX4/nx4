@@ -35,7 +35,8 @@ function Context() {
     // Line generator
     const line = d3.line()
       .x((d, i) => scaleX(i))
-      .y(d => scaleY(d.e));
+      .y(d => scaleY(d.e))
+      .curve(d3.curveStepAfter);
 
     // SVG initializer
     const svg = selection.selectAll('svg')
@@ -60,10 +61,10 @@ function Context() {
     context.append('path')
       .datum(lineData)
       .attr('fill', 'none')
-      .attr('stroke', 'steelblue')
+      .attr('stroke', 'rgb(213, 94, 0)')
       .attr('stroke-linejoin', 'round')
       .attr('stroke-linecap', 'round')
-      .attr('stroke-width', 1.5)
+      .attr('stroke-width', 1)
       .attr('class', 'contextPath')
       .attr('d', line);
 
@@ -99,7 +100,6 @@ function Context() {
 
     /* Update the range of the Overview line chart on 'brush' as opposed to
     on 'end' to enchance the usability.*/
-
     function brushedForOverview() {
       if (d3.event.sourceEvent && d3.event.sourceEvent.type === 'zoom') return;
       const s = d3.event.selection;
@@ -109,11 +109,6 @@ function Context() {
       // Reducer
       dispatch(actions.updateFocus(newRange, domain));
       dispatch(actions.updateRecs(newRange, domain));
-      // overviewX.domain(s.map(x2.invert, x2));
-      // overview.select('.overviewPath').attr('d', overviewLine);
-      // overviewtainerSvg.select('.zoom').call(zoom.transform, d3.zoomIdentity
-      //   .scale(overviewWidth / (s[1] - s[0]))
-      //   .translate(-s[0], 0));
     }
   } // exports()
 

@@ -3,7 +3,7 @@ import actions from '../actions/index';
 import { getState, dispatch, observe } from '../store';
 
 function Focus() {
-  const margin = { t: 20, r: 20, b: 20, l: 20 };
+  const margin = { t: 20, r: 20, b: 40, l: 20 };
   let W;
   let H;
 
@@ -27,8 +27,8 @@ function Focus() {
       .domain([0, 2]); // TODO, depends on base of LOG used for entropy
 
     // Axes
-    const xAxis = d3.axisBottom(scaleX);
-    const yAxis = d3.axisLeft(scaleY).ticks(2);
+    const xAxis = d3.axisBottom(scaleX).tickSizeInner(15);
+    const yAxis = d3.axisLeft(scaleY).ticks(2).tickSizeInner(10);
 
     // Line generator
     const lines = d3.line()
@@ -36,16 +36,45 @@ function Focus() {
       .y(d => scaleY(d.e))
       .curve(d3.curveStepAfter);
 
+    // Signif values for display
+    function precise(x) {
+      return Number.parseFloat(x).toPrecision(3);
+    }
+
     // Bisecting
     function mouseMove() {
-      const x0 = scaleX.invert(d3.mouse(this)[0]);
+      const mouseX = d3.mouse(this)[0];
+      const x0 = scaleX.invert(mouseX);
       const i = bisectPosition(lineData, x0, 1);
       const d0 = lineData[i - 1];
       const d1 = lineData[i];
       const d = x0 - d0.i > d1.i - x0 ? d1 : d0;
 
-      tooltip.select('circle.y') // eslint-disable-line
-        .attr('transform', `translate(${scaleX(d.i)}, ${scaleY(d.e)})`);
+      tooltip.select('.v-line') // eslint-disable-line
+        .attr('transform', `translate(${scaleX(d.i)}, 0)`);
+
+      tooltip.select('.h-line') // eslint-disable-line
+        .attr('transform', `translate(0, ${scaleY(d.e)})`);
+
+      const entropyText = tooltip.select('text.t-entropy') // eslint-disable-line
+        .text(`Shannon entropy: ${precise(d.e)}`);
+
+      const posText = tooltip.select('text.t-position') // eslint-disable-line
+        .text(`${d.i}aa`);
+
+      if (mouseX > W / 2) {
+        entropyText.attr('transform', `translate(${scaleX(d.i) - 20}, ${H / 4})`)
+          .attr('text-anchor', 'end');
+
+        posText.attr('transform', `translate(${scaleX(d.i) - 20}, ${H / 4})`)
+          .attr('text-anchor', 'end');
+      } else {
+        entropyText.attr('transform', `translate(${scaleX(d.i)}, ${H / 4})`)
+          .attr('text-anchor', 'start');
+
+        posText.attr('transform', `translate(${scaleX(d.i)}, ${H / 4})`)
+          .attr('text-anchor', 'start');
+      }
     }
 
     // SVG initializer
@@ -59,14 +88,6 @@ function Focus() {
       .merge(svg)
       .append('g')
       .attr('transform', `translate(${margin.l}, ${margin.t})`);
-
-    const tooltip = svgEnter.append('g')
-      .style('display', 'none');
-
-    tooltip.append('circle')
-      .attr('class', 'y')
-      .style('fill', 'red')
-      .attr('r', 4);
 
     svgEnter.append('defs').append('clipPath')
       .attr('id', 'clip')
@@ -82,10 +103,10 @@ function Focus() {
       .attr('class', 'focusPath')
       .attr('id', 'someid')
       .attr('fill', 'none')
-      .attr('stroke', 'steelblue')
+      .attr('stroke', 'rgb(213, 94, 0)')
       .attr('stroke-linejoin', 'round')
       .attr('stroke-linecap', 'round')
-      .attr('stroke-width', 1)
+      .attr('stroke-width', 1.5)
       .attr('d', lines);
 
     focus.append('g')
@@ -97,6 +118,10 @@ function Focus() {
       .attr('class', 'axis axis--y')
       .call(yAxis);
 
+    // tooltip
+    const tooltip = svgEnter.append('g')
+      .style('display', 'none');
+
     svgEnter.append('rect')
       .attr('width', W)
       .attr('height', H)
@@ -105,6 +130,36 @@ function Focus() {
       .on('mouseover', () => { tooltip.style('display', null); })
       .on('mouseout', () => { tooltip.style('display', 'none'); })
       .on('mousemove', mouseMove);
+
+    tooltip.append('line')
+      .attr('class', 'v-line')
+      .style('stroke', '#666')
+      .style('stroke-dasharray', '4,4')
+      .style('opacity', 1)
+      .attr('y1', 0)
+      .attr('y2', H);
+
+    tooltip.append('line')
+      .attr('class', 'h-line')
+      .style('stroke', '#666')
+      .style('stroke-dasharray', '4,4')
+      .style('opacity', 1)
+      .attr('x1', 0)
+      .attr('x2', W);
+
+    tooltip.append('text')
+      .attr('class', 't-entropy')
+      .style('fill', 'black')
+      .style('opacity', 0.8)
+      .attr('dx', 8)
+      .attr('dy', '-.3em');
+
+    tooltip.append('text')
+      .attr('class', 't-position')
+      .style('fill', 'black')
+      .style('opacity', 0.8)
+      .attr('dx', 8)
+      .attr('dy', '1em');
 
     const unsubscribe = observe(state => state.focus, (state, nextSate) => {
       const lower = Math.round(state.range[0]);

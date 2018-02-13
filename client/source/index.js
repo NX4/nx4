@@ -7,7 +7,7 @@ import Context from './modules/context';
 import Focus from './modules/focus';
 import Alignment from './modules/alignment';
 
-const lineChart = Context();
+const contextChart = Context();
 const focusChart = Focus();
 const alignmentChart = Alignment();
 
@@ -17,7 +17,7 @@ let entropyData = [];
 
 /** --------- INIT --------- */
 function init() {
-  select('#brush-container').datum(entropyData).call(lineChart);
+  select('#brush-container').datum(entropyData).call(contextChart);
   select('#overview-container').datum(entropyData).call(focusChart);
   select('#alignment-container').datum(gData).call(alignmentChart);
 }

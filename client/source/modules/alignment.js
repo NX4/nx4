@@ -10,7 +10,8 @@ function Alignment() {
   const scaleX = d3.scaleLinear();
   const scaleY = d3.scaleOrdinal();
   const aminos = ['A', 'C', 'T', 'G', 'N'];
-  const rectWidth = 10;
+  const rectWidth = 8;
+  const rectHeight = 20;
   let totalRects;
   let scaleXDomain;
 
@@ -66,7 +67,7 @@ function Alignment() {
       .attr('class', 'rectangle')
       .attr('x', d => scaleX(d.pos))
       .attr('width', rectWidth)
-      .attr('height', rectWidth)
+      .attr('height', rectHeight)
       .attr('y', d => scaleY(d.type))
       .attr('fill', (d) => {
         if (d.value < color.domain()[0] || d.value > color.domain()[2]) {
