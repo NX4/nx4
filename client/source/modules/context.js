@@ -1,12 +1,11 @@
 import * as d3 from 'd3';
 import actions from '../actions/index';
-import { getState, dispatch } from '../store';
+import { getState, dispatch, observe } from '../store';
 
 function Context() {
   const margin = { t: 20, r: 20, b: 20, l: 20 };
   let W;
   let H;
-  // const dis = d3.dispatch('countTrips');
   const scaleX = d3.scaleLinear();
   const scaleY = d3.scaleLinear();
 
@@ -36,7 +35,8 @@ function Context() {
     // Line generator
     const line = d3.line()
       .x((d, i) => scaleX(i))
-      .y(d => scaleY(d.e));
+      .y(d => scaleY(d.e))
+      .curve(d3.curveStepAfter);
 
     // SVG initializer
     const svg = selection.selectAll('svg')
@@ -61,10 +61,10 @@ function Context() {
     context.append('path')
       .datum(lineData)
       .attr('fill', 'none')
-      .attr('stroke', 'steelblue')
+      .attr('stroke', 'rgb(213, 94, 0)')
       .attr('stroke-linejoin', 'round')
       .attr('stroke-linecap', 'round')
-      .attr('stroke-width', 1.5)
+      .attr('stroke-width', 1)
       .attr('class', 'contextPath')
       .attr('d', line);
 
@@ -79,13 +79,11 @@ function Context() {
 
     const brushEl = svgEnter.append('g')
       .attr('class', 'brush')
-      .call(brush)
-      .call(brush.move, scaleX.range());
+      .call(brush);
 
-    // d3.select('body').on('click', function (d) {
-    //   console.log('click');
-    //   aBrush.call(brush.move, [200, 600].map(scaleX));
-    // });
+    const unsubscribe = observe(state => state.alignment, (state) => {
+      brushEl.call(brush.move, [0, state.rectCount].map(scaleX));
+    });
 
     // Interactive functions
     function brushed() {
@@ -97,12 +95,11 @@ function Context() {
       const domain = s.map(scaleX.invert, scaleX);
 
       // Reducer
-      dispatch(actions.updateRecs(newRange, domain));
+      // dispatch(actions.updateRecs(newRange, domain));
     }
 
     /* Update the range of the Overview line chart on 'brush' as opposed to
     on 'end' to enchance the usability.*/
-
     function brushedForOverview() {
       if (d3.event.sourceEvent && d3.event.sourceEvent.type === 'zoom') return;
       const s = d3.event.selection;
@@ -111,12 +108,7 @@ function Context() {
 
       // Reducer
       dispatch(actions.updateFocus(newRange, domain));
-
-      // overviewX.domain(s.map(x2.invert, x2));
-      // overview.select('.overviewPath').attr('d', overviewLine);
-      // overviewtainerSvg.select('.zoom').call(zoom.transform, d3.zoomIdentity
-      //   .scale(overviewWidth / (s[1] - s[0]))
-      //   .translate(-s[0], 0));
+      dispatch(actions.updateRecs(newRange, domain));
     }
   } // exports()
 

@@ -19,7 +19,17 @@ function updateFocus(range, domain) {
   };
 }
 
+function setRectCount(count) {
+  return {
+    type: 'SET_RECT_COUNT',
+    payload: {
+      count,
+    },
+  };
+}
+
 export default {
+  setRectCount,
   updateRecs,
   updateFocus,
 };

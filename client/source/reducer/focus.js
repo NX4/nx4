@@ -1,6 +1,6 @@
 const initialState = {
-  range: [],
-  domain: [],
+  range: [0, 0],
+  domain: [0, 0],
 };
 
 function focusReducer(state = initialState, action = {}) {
