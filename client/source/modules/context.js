@@ -9,6 +9,9 @@ function Context() {
   const scaleX = d3.scaleLinear();
   const scaleY = d3.scaleLinear();
 
+  const ticks = scaleY.ticks(2);
+  const tickFormat = scaleY.tickFormat('.%');
+
   /**
   * exports() returns a new line chart
   * based on the passed-in d3 selection
@@ -26,16 +29,16 @@ function Context() {
 
     scaleY
       .range([H, 0])
-      .domain([0, 2]); // TODO, depends on base of LOG used for entropy
+      .domain([0, 1]);
 
     // Axes
     const xAxisContext = d3.axisBottom(scaleX);
-    const yAxisContext = d3.axisLeft(scaleY).ticks(2);
+    const yAxisContext = d3.axisLeft(scaleY).ticks(2).tickFormat(d3.format('.1f'));
 
     // Line generator
     const line = d3.line()
       .x((d, i) => scaleX(i))
-      .y(d => scaleY(d.e))
+      .y(d => scaleY(d.e / 2))
       .curve(d3.curveStepAfter);
 
     // SVG initializer

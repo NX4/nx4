@@ -17,7 +17,7 @@ function Alignment() {
 
   const color = d3.scaleLinear()
     .domain([1, 50, 99])
-    .interpolate(d3.interpolateHcl)
+    .interpolate(d3.interpolateLab)
     .range([d3.rgb('#f3cbd3'), d3.rgb('#6c2167'), d3.rgb('#f3cbd3')]);
 
   /**
@@ -45,8 +45,8 @@ function Alignment() {
       .range([0, 25, 50, 75, 100]);
 
     // Axes
-    const xAxisContext = d3.axisBottom(scaleX);
-    const yAxisContext = d3.axisLeft(scaleY).ticks(2);
+    const xAxisAlignment = d3.axisBottom(scaleX);
+    const yAxisAlignment = d3.axisLeft(scaleY).ticks(2);
 
     // SVG initializer
     const svg = selection.selectAll('svg')
@@ -57,8 +57,8 @@ function Alignment() {
       .attr('width', W + margin.l + margin.r)
       .attr('height', H + margin.t + margin.b)
       .merge(svg)
-      .append('g')
-      .attr('transform', `translate(${margin.l}, ${margin.t})`);
+        .append('g')
+        .attr('transform', `translate(${margin.l}, ${margin.t})`);
 
     const basepairs = svgEnter.selectAll('rect')
       .data(alignData.slice(0, totalRects * 5));
@@ -69,12 +69,11 @@ function Alignment() {
       .attr('width', rectWidth)
       .attr('height', rectHeight)
       .attr('y', d => scaleY(d.type))
-      .attr('fill', (d) => {
-        if (d.value < color.domain()[0] || d.value > color.domain()[2]) {
-          return '#E0E0E0';
-        } return color(d.value);
-      })
       .on('mouseover', d => console.log(d));
+
+    svgEnter.append('g')
+      .attr('class', 'axis axis--y')
+      .call(yAxisAlignment);
 
     const unsubscribe = observe(state => state.focus, (state, nextSate) => {
       const lower = Math.round(state.range[0]);

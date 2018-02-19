@@ -24,7 +24,7 @@ function Focus() {
 
     scaleY
       .range([H, 0])
-      .domain([0, 2]); // TODO, depends on base of LOG used for entropy
+      .domain([0, 1]);
 
     // Axes
     const xAxis = d3.axisBottom(scaleX).tickSizeInner(15);
@@ -33,7 +33,7 @@ function Focus() {
     // Line generator
     const lines = d3.line()
       .x(d => scaleX(d.i))
-      .y(d => scaleY(d.e))
+      .y(d => scaleY(d.e / 2))
       .curve(d3.curveStepAfter);
 
     // Signif values for display
