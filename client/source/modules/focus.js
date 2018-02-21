@@ -3,7 +3,7 @@ import actions from '../actions/index';
 import { getState, dispatch, observe } from '../store';
 
 function Focus() {
-  const margin = { t: 20, r: 20, b: 40, l: 20 };
+  const margin = { t: 20, r: 20, b: 40, l: 40 };
   let W;
   let H;
 
@@ -44,6 +44,7 @@ function Focus() {
     // Bisecting
     function mouseMove() {
       const mouseX = d3.mouse(this)[0];
+      const mouseY = d3.mouse(this)[1];
       const x0 = scaleX.invert(mouseX);
       const i = bisectPosition(lineData, x0, 1);
       const d0 = lineData[i - 1];
@@ -54,25 +55,25 @@ function Focus() {
         .attr('transform', `translate(${scaleX(d.i)}, 0)`);
 
       tooltip.select('.h-line') // eslint-disable-line
-        .attr('transform', `translate(0, ${scaleY(d.e)})`);
+        .attr('transform', `translate(0, ${scaleY(d.e / 2)})`);
 
       const entropyText = tooltip.select('text.t-entropy') // eslint-disable-line
-        .text(`Shannon entropy: ${precise(d.e)}`);
+        .text(`Shannon entropy: ${precise(d.e / 2)}`);
 
       const posText = tooltip.select('text.t-position') // eslint-disable-line
         .text(`${d.i}aa`);
 
       if (mouseX > W / 2) {
-        entropyText.attr('transform', `translate(${scaleX(d.i) - 20}, ${H / 4})`)
+        entropyText.attr('transform', `translate(${scaleX(d.i) - 20}, ${mouseY})`)
           .attr('text-anchor', 'end');
 
-        posText.attr('transform', `translate(${scaleX(d.i) - 20}, ${H / 4})`)
+        posText.attr('transform', `translate(${scaleX(d.i) - 20}, ${mouseY})`)
           .attr('text-anchor', 'end');
       } else {
-        entropyText.attr('transform', `translate(${scaleX(d.i)}, ${H / 4})`)
+        entropyText.attr('transform', `translate(${scaleX(d.i)}, ${mouseY})`)
           .attr('text-anchor', 'start');
 
-        posText.attr('transform', `translate(${scaleX(d.i)}, ${H / 4})`)
+        posText.attr('transform', `translate(${scaleX(d.i)}, ${mouseY})`)
           .attr('text-anchor', 'start');
       }
     }
@@ -160,6 +161,8 @@ function Focus() {
       .style('opacity', 0.8)
       .attr('dx', 8)
       .attr('dy', '1em');
+
+    d3.selectAll('.handle').style('pointer-events', 'none');
 
     const unsubscribe = observe(state => state.focus, (state, nextSate) => {
       const lower = Math.round(state.range[0]);
