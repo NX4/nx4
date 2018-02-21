@@ -35,13 +35,6 @@ body {
   margin-bottom: 0;
 }
 
-.axis line,
-.axis path {
-  fill: none;
-  stroke: #666;
-  shape-rendering: crispEdges;
-}
-
 .zoom {
   cursor: move;
   fill: none;
@@ -49,12 +42,23 @@ body {
 }
 
 #someid {
-  // fill: steelblue;
   clip-path: url(#clip);
 }
 
-.axis > .domain {
+.axis {
+  .domain {
   stroke: none;
+  }
+  .tick {
+    text {
+      cursor: default;
+    }
+    line {
+      fill: none;
+      stroke: #666;
+      shape-rendering: crispEdges;
+    }
+  }
 }
 
 .t-position, .t-entropy {

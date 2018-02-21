@@ -3,7 +3,7 @@ import actions from '../actions/index';
 import { getState, dispatch, observe } from '../store';
 
 function Context() {
-  const margin = { t: 20, r: 20, b: 20, l: 20 };
+  const margin = { t: 20, r: 20, b: 20, l: 40 };
   let W;
   let H;
   const scaleX = d3.scaleLinear();
@@ -64,7 +64,7 @@ function Context() {
     context.append('path')
       .datum(lineData)
       .attr('fill', 'none')
-      .attr('stroke', 'rgb(213, 94, 0)')
+      .attr('stroke', '#0F8554')
       .attr('stroke-linejoin', 'round')
       .attr('stroke-linecap', 'round')
       .attr('stroke-width', 1)
@@ -93,12 +93,7 @@ function Context() {
       if (d3.event.sourceEvent && d3.event.sourceEvent.type === 'zoom') return;
       const s = d3.event.selection;
       const newRange = s.map((scaleX.invert));
-      // const lower = Math.round(newRange[0]);
-      // const upper = Math.round(newRange[1]);
       const domain = s.map(scaleX.invert, scaleX);
-
-      // Reducer
-      // dispatch(actions.updateRecs(newRange, domain));
     }
 
     /* Update the range of the Overview line chart on 'brush' as opposed to

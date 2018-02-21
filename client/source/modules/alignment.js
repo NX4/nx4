@@ -11,9 +11,9 @@ function Alignment() {
   const scaleY = d3.scaleOrdinal();
   const aminos = ['A', 'C', 'T', 'G', 'N'];
   const rectWidth = 8;
-  const rectHeight = 20;
+  const rectHeight = 25;
+  const scaleYRange = d3.range(0, rectHeight * 5, rectHeight + 5);
   let totalRects;
-  let scaleXDomain;
   let filteredData;
 
   const color = d3.scaleLinear()
@@ -34,7 +34,6 @@ function Alignment() {
 
     // calculate width
     totalRects = Math.floor(W / rectWidth);
-    scaleXDomain = Math.floor(alignData.length / aminos.length);
 
     dispatch(actions.setRectCount(totalRects));
 
@@ -45,7 +44,7 @@ function Alignment() {
 
     scaleY
       .domain(aminos)
-      .range([0, 25, 50, 75, 100]);
+      .range(scaleYRange);
 
     // Axes
     const xAxisAlignment = d3.axisBottom(scaleX);
@@ -97,27 +96,34 @@ function Alignment() {
       .attr('height', rectHeight)
       .attr('y', d => scaleY(d.type))
       .style('pointer-events', 'all')
-      .on('mouseover', () => { tooltip.style('display', null); })   // eslint-disable-line
-      .on('mouseout', () => { tooltip.style('display', 'none'); })  // eslint-disable-line
+      .on('mouseover', () => { tooltip.style('display', null); })
+      .on('mouseout', () => { tooltip.style('display', 'none'); })
       .on('mousemove', (d) => {
         const column = _filter(filteredData, o => o.pos === d.pos);
 
         console.log(column);
 
-        tooltip.select('.l-line') // eslint-disable-line
+        tooltip.select('.l-line')
           .attr('transform', `translate(${scaleX(d.pos)}, 0)`);
 
-        tooltip.select('.r-line') // eslint-disable-line
+        tooltip.select('.r-line')
           .attr('transform', `translate(${scaleX(d.pos + 1)}, 0)`);
 
-        tooltip.select('.triangle') // eslint-disable-line
+        tooltip.select('.triangle')
           .attr('transform', `translate(${scaleX(d.pos)}, -5)`);
-      });
 
+        tooltip.select('.t-percent')
+          .text(column[0].value);
+      });
 
     svgEnter.append('g')
       .attr('class', 'axis axis--y')
       .call(yAxisAlignment);
+
+    d3.select('#alignment-container').selectAll('line').style('display', 'none');
+    d3.select('#alignment-container').selectAll('text')
+      .attr('dy', (rectHeight / 2) + 2)
+      .attr('dx', -20);
 
     // tooltip
     const tooltip = svgEnter.append('g')
@@ -146,13 +152,13 @@ function Alignment() {
       .attr('y2', 130);
 
     tooltip.append('text')
-      .attr('class', 't-entropy')
+      .attr('class', 't-percent')
       .style('fill', 'black')
       .style('opacity', 0.8)
-      .attr('dx', 8)
-      .attr('dy', '-.3em')
+      // .attr('dx', 8)
+      // .attr('dy', '-.3em')
       .text('test')
-      .attr('transform', `translate(${-30}, ${scaleY('A')})`);
+      .attr('transform', `translate(${-20}, ${scaleY('A') + (rectHeight / 2) + 2})`);
 
     const unsubscribe = observe(state => state.focus, (state, nextSate) => {
       const lower = Math.round(state.range[0]);
@@ -164,8 +170,10 @@ function Alignment() {
 
       basepairsEnter.transition().duration(10)
       .attr('fill', (d) => {
-        if (d.value < color.domain()[0] || d.value > color.domain()[2]) {
-          return '#E0E0E0';
+        if (d.value < color.domain()[0]) {
+          return '#f2f2f2';
+        } else if (d.value > color.domain()[2]) {
+          return '#C0C0C0';
         } return color(d.value);
       });
     });

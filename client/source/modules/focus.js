@@ -104,7 +104,7 @@ function Focus() {
       .attr('class', 'focusPath')
       .attr('id', 'someid')
       .attr('fill', 'none')
-      .attr('stroke', 'rgb(213, 94, 0)')
+      .attr('stroke', '#0F8554')
       .attr('stroke-linejoin', 'round')
       .attr('stroke-linecap', 'round')
       .attr('stroke-width', 1.5)
@@ -162,7 +162,9 @@ function Focus() {
       .attr('dx', 8)
       .attr('dy', '1em');
 
+    // Disable brush stretching or generating a new brush
     d3.selectAll('.handle').style('pointer-events', 'none');
+    d3.select('.brush').select('.overlay').attr('pointer-events', 'none');
 
     const unsubscribe = observe(state => state.focus, (state, nextSate) => {
       const lower = Math.round(state.range[0]);
