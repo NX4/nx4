@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css?family=Assistant');
+@import url('https://fonts.googleapis.com/css?family=Assistant:400,600');
 
 body {
   font-family: 'Assistant', sans-serif;
@@ -61,6 +61,7 @@ body {
   }
 }
 
-.t-position, .t-entropy {
+.t-position, .t-entropy, .t-percent {
   font-size: 14px;
+  font-weight: 600;
 }

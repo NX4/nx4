@@ -4,7 +4,7 @@ import actions from '../actions/index';
 import { getState, dispatch, observe } from '../store';
 
 function Alignment() {
-  const margin = { t: 20, r: 20, b: 20, l: 40 };
+  const margin = { t: 20, r: 20, b: 20, l: 50 };
   let W;
   let H;
   const scaleX = d3.scaleLinear();
@@ -15,6 +15,7 @@ function Alignment() {
   const scaleYRange = d3.range(0, rectHeight * 5, rectHeight + 5);
   let totalRects;
   let filteredData;
+  const smallPerc = '\uFE6A';
 
   const color = d3.scaleLinear()
     .domain([1, 50, 99])
@@ -50,30 +51,6 @@ function Alignment() {
     const xAxisAlignment = d3.axisBottom(scaleX);
     const yAxisAlignment = d3.axisLeft(scaleY).ticks(2);
 
-    // Bisecting
-    function mouseMove() {
-      // const newSel = d3.selectAll('.rectangle').filter(function(d) {
-      //   console.log(d);
-      //   d.pos === x0;
-      // });
-
-      // console.log(newSel);
-
-      // if (mouseX > W / 2) {
-      //   entropyText.attr('transform', `translate(${scaleX(d.i) - 20}, ${mouseY})`)
-      //     .attr('text-anchor', 'end');
-
-      //   posText.attr('transform', `translate(${scaleX(d.i) - 20}, ${mouseY})`)
-      //     .attr('text-anchor', 'end');
-      // } else {
-      //   entropyText.attr('transform', `translate(${scaleX(d.i)}, ${mouseY})`)
-      //     .attr('text-anchor', 'start');
-
-      //   posText.attr('transform', `translate(${scaleX(d.i)}, ${mouseY})`)
-      //     .attr('text-anchor', 'start');
-      // }
-    }
-
     // SVG initializer
     const svg = selection.selectAll('svg')
       .data([0]);
@@ -101,8 +78,6 @@ function Alignment() {
       .on('mousemove', (d) => {
         const column = _filter(filteredData, o => o.pos === d.pos);
 
-        console.log(column);
-
         tooltip.select('.l-line')
           .attr('transform', `translate(${scaleX(d.pos)}, 0)`);
 
@@ -112,8 +87,10 @@ function Alignment() {
         tooltip.select('.triangle')
           .attr('transform', `translate(${scaleX(d.pos)}, -5)`);
 
-        tooltip.select('.t-percent')
-          .text(column[0].value);
+        tooltip.selectAll('.t-percent')
+          .each(function (e, i) {
+            d3.select(this).text(`${column[i].value}${smallPerc}`);
+          });
       });
 
     svgEnter.append('g')
@@ -121,9 +98,11 @@ function Alignment() {
       .call(yAxisAlignment);
 
     d3.select('#alignment-container').selectAll('line').style('display', 'none');
+
+    // Modifying the position of the Y scale (nucleotides)
     d3.select('#alignment-container').selectAll('text')
       .attr('dy', (rectHeight / 2) + 2)
-      .attr('dx', -20);
+      .attr('dx', -30);
 
     // tooltip
     const tooltip = svgEnter.append('g')
@@ -140,7 +119,7 @@ function Alignment() {
       .style('pointer-events', 'none')
       .style('opacity', 1)
       .attr('y1', 0)
-      .attr('y2', 130);
+      .attr('y2', (rectHeight * 5) + (5 * 6));
 
     tooltip.append('line')
       .attr('class', 'r-line')
@@ -149,16 +128,17 @@ function Alignment() {
       .style('pointer-events', 'none')
       .style('opacity', 1)
       .attr('y1', 0)
-      .attr('y2', 130);
+      .attr('y2', (rectHeight * 5) + (5 * 6));
 
-    tooltip.append('text')
+    tooltip.selectAll('.t-percent')
+      .data(aminos)
+      .enter().append('text')
       .attr('class', 't-percent')
       .style('fill', 'black')
       .style('opacity', 0.8)
-      // .attr('dx', 8)
-      // .attr('dy', '-.3em')
-      .text('test')
-      .attr('transform', `translate(${-20}, ${scaleY('A') + (rectHeight / 2) + 2})`);
+      .attr('text-anchor', 'end')
+      .text('-%')
+      .attr('transform', d => `translate(${-2}, ${scaleY(d) + (rectHeight / 2) + 4})`);
 
     const unsubscribe = observe(state => state.focus, (state, nextSate) => {
       const lower = Math.round(state.range[0]);
