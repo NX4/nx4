@@ -78,6 +78,8 @@ function Alignment() {
       .on('mousemove', (d) => {
         const column = _filter(filteredData, o => o.pos === d.pos);
 
+        scaleX.domain([filteredData[0].pos, filteredData[0].pos + totalRects]);
+
         tooltip.select('.l-line')
           .attr('transform', `translate(${scaleX(d.pos)}, 0)`);
 
