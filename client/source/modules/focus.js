@@ -3,7 +3,7 @@ import actions from '../actions/index';
 import { getState, dispatch, observe } from '../store';
 
 function Focus() {
-  const margin = { t: 20, r: 20, b: 40, l: 40 };
+  const margin = { t: 20, r: 20, b: 40, l: 50 };
   let W;
   let H;
 
