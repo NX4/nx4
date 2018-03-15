@@ -4,7 +4,7 @@ import actions from '../actions/index';
 import { getState, dispatch, observe } from '../store';
 
 function Alignment() {
-  const margin = { t: 20, r: 20, b: 20, l: 50 };
+  const margin = { t: 40, r: 20, b: 20, l: 50 };
   let W;
   let H;
   const scaleX = d3.scaleLinear();
@@ -98,6 +98,44 @@ function Alignment() {
     svgEnter.append('g')
       .attr('class', 'axis axis--y')
       .call(yAxisAlignment);
+
+    const keyContainer = svgEnter.append('g')
+      .attr('class', 'key-container');
+
+    // Color scale key
+    const defs = svgEnter.append('defs');
+    const linearGradient = defs.append('linearGradient')
+      .attr('id', 'linear-gradient');
+    
+
+    // Horizontal gradient
+    linearGradient
+      .attr('x1', '0%')
+      .attr('y1', '0%')
+      .attr('x2', '100%')
+      .attr('y2', '0%');
+
+    // start color (0%)
+    // linearGradient.append('stop')
+    //   .attr('offset', '0%')
+    //   .attr('stop-color', '#f3cbd3');
+
+    // // end color (100%)
+    // linearGradient.append('stop')
+    //   .attr('offset', '100%')
+    //   .attr('stop-color', '#6c2167');
+
+    linearGradient.selectAll('stop')
+      .data(color.range())
+      .enter().append('stop')
+      .attr('offset', (d, i) => i / (color.range().length - 1))
+      .attr('stop-color', d => d);
+
+    keyContainer.append('rect')
+      .attr('width', 250)
+      .attr('height', 10)
+      .style('fill', 'url(#linear-gradient)')
+      .attr('transform', `translate(300, ${-margin.t})`);
 
     d3.select('#alignment-container').selectAll('line').style('display', 'none');
 

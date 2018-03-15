@@ -57,8 +57,8 @@ function parseData(array) {
 
 function init() {
     return new Promise(resolve => {
-        // fs.readFile(`${__dirname}/data/MuV-MDPH.aligned.pruned.fasta`, 'utf8', (err, data) => {
-        fs.readFile(`${__dirname}/data/171020-KGA_RAxML_bipartitions.ebov_alignment_red.fasta`, 'utf8', (err, data) => {
+        fs.readFile(`${__dirname}/data/MuV-MDPH.aligned.pruned.fasta`, 'utf8', (err, data) => {
+        // fs.readFile(`${__dirname}/data/171020-KGA_RAxML_bipartitions.ebov_alignment_red.fasta`, 'utf8', (err, data) => {
             if (err) {
                 return console.log(err);
             }

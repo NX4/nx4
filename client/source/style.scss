@@ -2,6 +2,60 @@
 
 body {
   font-family: 'Assistant', sans-serif;
+  margin: 0;
+}
+
+ul {
+  padding: 0;
+  list-style: none;
+}
+
+h4 {
+  text-transform: uppercase;
+  color: #666;
+  font-weight: 400;
+}
+
+.navbar {
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-wrap: nowrap;
+  flex-wrap: nowrap;
+  // justify-content: space-between;
+
+  height: 46px;
+  align-items: center;
+  padding: 0 10px;
+  margin: 0;
+  border: 1px solid rgba(238,238,238 ,1);
+  // border-radius: 5px;
+  color: rgba(117,117,117 ,1);
+  box-shadow: 5px 10px 20px -20px rgb(125, 125, 125);
+
+  li {
+    cursor: pointer;
+  }
+
+  :not(:first-child) {
+      width: 10%;
+      margin: 0 10px;
+      // border: 1px red solid;
+      text-align: right;
+    }
+
+  .home {
+    width: 100px;
+    margin: 0 10px;
+    // border: 1px red solid;
+
+    i {
+      // background: url(./img/nx4_logo.svg);
+    }
+  }
+
+  :nth-child(3) {
+    margin-left: auto;
+  }
 }
 
 #title {
