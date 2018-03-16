@@ -50,17 +50,18 @@ const config = {
       { test: /\.json$/, use: 'json-loader' },
       {
         test: /\.svg$/,
-        loader: 'svg',
+        loader: 'svg-loader',
       },
-      {
-        test: /\.(png|jpg|gif)$/,
-        use: [
-          {
-            loader: 'file-loader',
-            options: {},
-          },
-        ],
-      },
+      // {
+      //   test: /\.svg$/,
+      //   use: [
+      //     'svg-loader',
+      //     // {
+      //     //   loader: 'file-loader',
+      //     //   options: {},
+      //     // },
+      //   ],
+      // },
     ],
   },
   resolve: {

@@ -9,7 +9,7 @@ function Alignment() {
   let H;
   const scaleX = d3.scaleLinear();
   const scaleY = d3.scaleOrdinal();
-  const aminos = ['A', 'C', 'T', 'G', 'N'];
+  const aminos = ['A', 'C', 'G', 'T', 'N'];
   const rectWidth = 8;
   const rectHeight = 25;
   const scaleYRange = d3.range(0, rectHeight * 5, rectHeight + 5);
@@ -32,6 +32,8 @@ function Alignment() {
     W = W || selection.node().clientWidth - margin.l - margin.r;
     H = H || selection.node().clientHeight - margin.t - margin.b;
     const alignData = selection.datum() ? selection.datum() : [];
+
+    console.log(alignData.slice(10));
 
     // calculate width
     totalRects = Math.floor(W / rectWidth);
@@ -89,9 +91,12 @@ function Alignment() {
         tooltip.select('.triangle')
           .attr('transform', `translate(${scaleX(d.pos)}, -5)`);
 
+        console.log(d, column);
+
         tooltip.selectAll('.t-percent')
           .each(function (e, i) {
             d3.select(this).text(`${column[i].value}${smallPerc}`);
+            console.log(e, column[i].value);
           });
       });
 
@@ -106,7 +111,6 @@ function Alignment() {
     const defs = svgEnter.append('defs');
     const linearGradient = defs.append('linearGradient')
       .attr('id', 'linear-gradient');
-    
 
     // Horizontal gradient
     linearGradient
@@ -131,11 +135,11 @@ function Alignment() {
       .attr('offset', (d, i) => i / (color.range().length - 1))
       .attr('stop-color', d => d);
 
-    keyContainer.append('rect')
-      .attr('width', 250)
-      .attr('height', 10)
-      .style('fill', 'url(#linear-gradient)')
-      .attr('transform', `translate(300, ${-margin.t})`);
+    // keyContainer.append('rect')
+    //   .attr('width', 250)
+    //   .attr('height', 10)
+    //   .style('fill', 'url(#linear-gradient)')
+    //   .attr('transform', `translate(300, ${-margin.t})`);
 
     d3.select('#alignment-container').selectAll('line').style('display', 'none');
 

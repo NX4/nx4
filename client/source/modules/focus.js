@@ -61,7 +61,7 @@ function Focus() {
         .text(`Shannon entropy: ${precise(d.e / 2)}`);
 
       const posText = tooltip.select('text.t-position') // eslint-disable-line
-        .text(`${d.i}aa`);
+        .text(`Position: ${d.i}`);
 
       if (mouseX > W / 2) {
         entropyText.attr('transform', `translate(${scaleX(d.i) - 20}, ${mouseY})`)
