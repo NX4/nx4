@@ -36,6 +36,13 @@ h4 {
     cursor: pointer;
   }
 
+  .home {
+    // LOGO
+    img {
+      width: 30px;
+    }
+  }
+
   :not(:first-child) {
       // width: 10%;
       margin: 0;

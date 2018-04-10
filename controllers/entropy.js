@@ -14,11 +14,11 @@ function arraySeqs(seqs) {
     })
 }
 
-function applyPercentage(obj) {
+function applyPercentage(obj, gaps, ambi) {
     return new Promise(resolve => {
         const keys = Object.keys(obj);
         for (let i = 0; i < keys.length; i++) {
-            const val = obj[keys[i]] / fastaTotal;
+            const val = obj[keys[i]] / (fastaTotal - (gaps + ambi) );
             obj[keys[i]] = Math.round(val * 100);
         }
         resolve(obj);
@@ -29,14 +29,28 @@ function parseData(array) {
     return new Promise(resolve => {
         const positionData = [];
         const entropy = [];
+        const gapsArr = [];
         for (let i = 0; i < array[0].length; i++) {
             const obj = {
                 A: 0, C: 0, G: 0, T: 0, N: 0
             };
+            let gaps = 0;
+            let ambiguity = 0;
             for (let t = 0; t < array.length; t++) {
-                obj[array[t].charAt(i)] += 1;
+                if (array[t].charAt(i) == '-') {
+                    gaps += 1;
+                }
+                else if (Object.keys(obj).indexOf(array[t].charAt(i)) === -1) {
+                    ambiguity += 1;
+                }
+                else {
+                    obj[array[t].charAt(i)] += 1;
+                }
             }
-            applyPercentage(obj).then(pObj => {
+            if (gaps > 0 ) {
+                gapsArr.push({pos: i, gaps});
+            }
+            applyPercentage(obj, gaps, ambiguity).then(pObj => {
                 const cEntropy = [];
                 let vEntropy = 0;
                 const oKeys = Object.keys(pObj);
@@ -51,14 +65,14 @@ function parseData(array) {
                 entropy.push({i, e: vEntropy * -1});
             })
         }
-        resolve([positionData, entropy]);
+        resolve([positionData, entropy, gapsArr]);
     })
 }
 
 function init() {
     return new Promise(resolve => {
-        fs.readFile(`${__dirname}/data/MuV-MDPH.aligned.pruned.fasta`, 'utf8', (err, data) => {
-        // fs.readFile(`${__dirname}/data/171020-KGA_RAxML_bipartitions.ebov_alignment_red.fasta`, 'utf8', (err, data) => {
+        // fs.readFile(`${__dirname}/data/MuV-MDPH.aligned.pruned.fasta`, 'utf8', (err, data) => {
+        fs.readFile(`${__dirname}/data/171020-KGA_RAxML_bipartitions.ebov_alignment_red.fasta`, 'utf8', (err, data) => {
             if (err) {
                 return console.log(err);
             }

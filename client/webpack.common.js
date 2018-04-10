@@ -49,19 +49,9 @@ const config = {
       },
       { test: /\.json$/, use: 'json-loader' },
       {
-        test: /\.svg$/,
-        loader: 'svg-loader',
+        test: /\.(png|jpg|svg)$/,
+        loader: 'file-loader',
       },
-      // {
-      //   test: /\.svg$/,
-      //   use: [
-      //     'svg-loader',
-      //     // {
-      //     //   loader: 'file-loader',
-      //     //   options: {},
-      //     // },
-      //   ],
-      // },
     ],
   },
   resolve: {
