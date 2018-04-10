@@ -9,8 +9,8 @@ function Focus() {
 
   const scaleX = d3.scaleLinear();
   const scaleY = d3.scaleLinear();
-
   const bisectPosition = d3.bisector(d => d.i).left;
+  const rectWidth = 8;
 
   function exports(selection) {
     W = W || selection.node().clientWidth - margin.l - margin.r;
@@ -51,11 +51,14 @@ function Focus() {
       const d1 = lineData[i];
       const d = x0 - d0.i > d1.i - x0 ? d1 : d0;
 
-      tooltip.select('.v-line') // eslint-disable-line
-        .attr('transform', `translate(${scaleX(d.i)}, 0)`);
+      // Reducer
+      dispatch(actions.coordinateDetail(d.i));
 
-      tooltip.select('.h-line') // eslint-disable-line
-        .attr('transform', `translate(0, ${scaleY(d.e / 2)})`);
+      tooltip.select('.v-line') // eslint-disable-line
+        .attr('transform', `translate(${scaleX(d.i) + (rectWidth / 2)}, 0)`);
+
+      // tooltip.select('.h-line') // eslint-disable-line
+      //   .attr('transform', `translate(0, ${scaleY(d.e / 2)})`);
 
       const entropyText = tooltip.select('text.t-entropy') // eslint-disable-line
         .text(`Shannon entropy: ${precise(d.e / 2)}`);
@@ -128,8 +131,14 @@ function Focus() {
       .attr('height', H)
       .style('fill', 'none')
       .style('pointer-events', 'all')
-      .on('mouseover', () => { tooltip.style('display', null); })
-      .on('mouseout', () => { tooltip.style('display', 'none'); })
+      .on('mouseover', () => {
+        tooltip.style('display', null);
+        d3.select('.tooltipAlign').style('display', null);
+      })
+      .on('mouseout', () => {
+        tooltip.style('display', 'none');
+        d3.select('.tooltipAlign').style('display', 'none');
+      })
       .on('mousemove', mouseMove);
 
     tooltip.append('line')
@@ -138,15 +147,15 @@ function Focus() {
       .style('stroke-dasharray', '4,4')
       .style('opacity', 1)
       .attr('y1', 0)
-      .attr('y2', H);
+      .attr('y2', H + margin.b);
 
-    tooltip.append('line')
-      .attr('class', 'h-line')
-      .style('stroke', '#666')
-      .style('stroke-dasharray', '4,4')
-      .style('opacity', 1)
-      .attr('x1', 0)
-      .attr('x2', W);
+    // tooltip.append('line')
+    //   .attr('class', 'h-line')
+    //   .style('stroke', '#666')
+    //   .style('stroke-dasharray', '4,4')
+    //   .style('opacity', 1)
+    //   .attr('x1', 0)
+    //   .attr('x2', W);
 
     tooltip.append('text')
       .attr('class', 't-entropy')
@@ -173,6 +182,8 @@ function Focus() {
       scaleX.domain(state.domain);
       d3.select('#someid').attr('d', lines);
       focus.select('.axis--x').call(xAxis);
+
+      console.log('unsubscribe within focus');
     });
   }
 
