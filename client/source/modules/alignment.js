@@ -73,9 +73,18 @@ function Alignment() {
       .attr('height', rectHeight)
       .attr('y', d => scaleY(d.type))
       .style('pointer-events', 'all')
-      .on('mouseover', () => { tooltip.style('display', null); })
-      .on('mouseout', () => { tooltip.style('display', 'none'); })
-      .on('mousemove', (d) => { mouseMove(d, 'pos'); });
+      .on('mouseover', () => {
+        tooltip.style('display', null);
+        d3.select('.tooltipFocus').style('display', null);
+      })
+      .on('mouseout', () => {
+        tooltip.style('display', 'none');
+        d3.select('.tooltipFocus').style('display', 'none');
+      })
+      .on('mousemove', (d) => {
+        dispatch(actions.alignmentDetail(d.pos));
+        mouseMove(d, 'pos');
+      });
 
     function mouseMove(d, key) {
       const column = _filter(filteredData, o => o.pos === d[key]);

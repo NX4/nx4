@@ -42,17 +42,35 @@ function Focus() {
     }
 
     // Bisecting
-    function mouseMove() {
-      const mouseX = d3.mouse(this)[0];
-      const mouseY = d3.mouse(this)[1];
-      const x0 = scaleX.invert(mouseX);
-      const i = bisectPosition(lineData, x0, 1);
-      const d0 = lineData[i - 1];
-      const d1 = lineData[i];
-      const d = x0 - d0.i > d1.i - x0 ? d1 : d0;
+    function mouseMove(ctx, test) {
+      let mouseX;
+      let mouseY;
+      let x0;
+      let i;
+      let d0;
+      let d1;
+      let d;
 
-      // Reducer
-      dispatch(actions.coordinateDetail(d.i));
+      if (test !== null) {
+        // event from reducer
+        i = test.position;
+        d1 = lineData[i];
+        d = d1;
+        mouseX = scaleX(i);
+        mouseY = 20;
+      } else {
+        // event from this module
+        mouseX = d3.mouse(ctx)[0];
+        mouseY = d3.mouse(ctx)[1];
+        x0 = scaleX.invert(mouseX);
+        i = bisectPosition(lineData, x0, 1);
+        d0 = lineData[i - 1];
+        d1 = lineData[i];
+        d = x0 - d0.i > d1.i - x0 ? d1 : d0;
+
+        // Reducer
+        dispatch(actions.coordinateDetail(d.i));
+      }
 
       tooltip.select('.v-line') // eslint-disable-line
         .attr('transform', `translate(${scaleX(d.i) + (rectWidth / 2)}, 0)`);
@@ -124,11 +142,13 @@ function Focus() {
 
     // tooltip
     const tooltip = svgEnter.append('g')
-      .style('display', 'none');
+      .style('display', 'none')
+      .attr('class', 'tooltipFocus');
 
     svgEnter.append('rect')
       .attr('width', W)
       .attr('height', H)
+      .attr('class', 'focusMouseCtx')
       .style('fill', 'none')
       .style('pointer-events', 'all')
       .on('mouseover', () => {
@@ -139,7 +159,9 @@ function Focus() {
         tooltip.style('display', 'none');
         d3.select('.tooltipAlign').style('display', 'none');
       })
-      .on('mousemove', mouseMove);
+      .on('mousemove', function (d) {
+        mouseMove(this, null);
+      });
 
     tooltip.append('line')
       .attr('class', 'v-line')
@@ -175,6 +197,21 @@ function Focus() {
     d3.selectAll('.handle').style('pointer-events', 'none');
     d3.select('.brush').select('.overlay').attr('pointer-events', 'none');
 
+    const context = d3.select('.focusMouseCtx').node();
+    console.log(context);
+
+    setTimeout(() => {
+      const unsubscribeHover = observe(state => state.alignHover, (state, nextState) => {
+        console.log('position hovering on matrix inside focus', state);
+
+
+        mouseMove(context, state);
+
+        // console.log(context);
+      }, 500);
+    });
+
+
     const unsubscribe = observe(state => state.focus, (state, nextSate) => {
       const lower = Math.round(state.range[0]);
       const upper = Math.round(state.range[1]);
@@ -182,8 +219,6 @@ function Focus() {
       scaleX.domain(state.domain);
       d3.select('#someid').attr('d', lines);
       focus.select('.axis--x').call(xAxis);
-
-      console.log('unsubscribe within focus');
     });
   }
 

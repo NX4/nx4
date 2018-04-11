@@ -37,9 +37,19 @@ function coordinateDetail(position) {
   };
 }
 
+function alignmentDetail(position) {
+  return {
+    type: 'COORD_ALIGN',
+    payload: {
+      position,
+    },
+  };
+}
+
 export default {
   setRectCount,
   updateRecs,
   updateFocus,
   coordinateDetail,
+  alignmentDetail,
 };
