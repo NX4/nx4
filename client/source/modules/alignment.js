@@ -33,8 +33,6 @@ function Alignment() {
     H = H || selection.node().clientHeight - margin.t - margin.b;
     const alignData = selection.datum() ? selection.datum() : [];
 
-    console.log(alignData.slice(10));
-
     // calculate width
     totalRects = Math.floor(W / rectWidth);
 
@@ -75,30 +73,35 @@ function Alignment() {
       .attr('height', rectHeight)
       .attr('y', d => scaleY(d.type))
       .style('pointer-events', 'all')
-      .on('mouseover', () => { tooltip.style('display', null); })
-      .on('mouseout', () => { tooltip.style('display', 'none'); })
+      .on('mouseover', () => {
+        tooltip.style('display', null);
+        d3.select('.tooltipFocus').style('display', null);
+      })
+      .on('mouseout', () => {
+        tooltip.style('display', 'none');
+        d3.select('.tooltipFocus').style('display', 'none');
+      })
       .on('mousemove', (d) => {
-        const column = _filter(filteredData, o => o.pos === d.pos);
-
-        scaleX.domain([filteredData[0].pos, filteredData[0].pos + totalRects]);
-
-        tooltip.select('.l-line')
-          .attr('transform', `translate(${scaleX(d.pos)}, 0)`);
-
-        tooltip.select('.r-line')
-          .attr('transform', `translate(${scaleX(d.pos + 1)}, 0)`);
-
-        tooltip.select('.triangle')
-          .attr('transform', `translate(${scaleX(d.pos)}, -5)`);
-
-        console.log(d, column);
-
-        tooltip.selectAll('.t-percent')
-          .each(function (e, i) {
-            d3.select(this).text(`${column[i].value}${smallPerc}`);
-            console.log(e, column[i].value);
-          });
+        dispatch(actions.alignmentDetail(d.pos));
+        mouseMove(d, 'pos');
       });
+
+    function mouseMove(d, key) {
+      const column = _filter(filteredData, o => o.pos === d[key]);
+      scaleX.domain([filteredData[0].pos, filteredData[0].pos + totalRects]);
+
+      tooltip.select('.l-line')
+        .attr('transform', `translate(${scaleX(d[key])}, 0)`);
+
+      tooltip.select('.r-line')
+        .attr('transform', `translate(${scaleX(d[key] + 1)}, 0)`);
+
+      tooltip.select('.triangle')
+        .attr('transform', `translate(${scaleX(d[key])}, -5)`);
+
+      tooltip.selectAll('.t-percent')
+        .each(function (e, i) { d3.select(this).text(`${column[i].value}${smallPerc}`); });
+    }
 
     svgEnter.append('g')
       .attr('class', 'axis axis--y')
@@ -150,7 +153,8 @@ function Alignment() {
 
     // tooltip
     const tooltip = svgEnter.append('g')
-      .style('display', 'none');
+      .style('display', 'none')
+      .attr('class', 'tooltipAlign');
 
     tooltip.append('polygon')
       .attr('class', 'triangle')
@@ -183,6 +187,12 @@ function Alignment() {
       .attr('text-anchor', 'end')
       .text('-%')
       .attr('transform', d => `translate(${-2}, ${scaleY(d) + (rectHeight / 2) + 4})`);
+
+    setTimeout(() => {
+      const unsubscribeHover = observe(state => state.detailHover, (state, nextState) => {
+        mouseMove(state, 'position');
+      }, 300);
+    });
 
     const unsubscribe = observe(state => state.focus, (state, nextSate) => {
       const lower = Math.round(state.range[0]);

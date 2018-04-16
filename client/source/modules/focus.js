@@ -9,8 +9,8 @@ function Focus() {
 
   const scaleX = d3.scaleLinear();
   const scaleY = d3.scaleLinear();
-
   const bisectPosition = d3.bisector(d => d.i).left;
+  const rectWidth = 8;
 
   function exports(selection) {
     W = W || selection.node().clientWidth - margin.l - margin.r;
@@ -42,20 +42,41 @@ function Focus() {
     }
 
     // Bisecting
-    function mouseMove() {
-      const mouseX = d3.mouse(this)[0];
-      const mouseY = d3.mouse(this)[1];
-      const x0 = scaleX.invert(mouseX);
-      const i = bisectPosition(lineData, x0, 1);
-      const d0 = lineData[i - 1];
-      const d1 = lineData[i];
-      const d = x0 - d0.i > d1.i - x0 ? d1 : d0;
+    function mouseMove(ctx, test) {
+      let mouseX;
+      let mouseY;
+      let x0;
+      let i;
+      let d0;
+      let d1;
+      let d;
+
+      if (test !== null) {
+        // event from reducer
+        i = test.position;
+        d1 = lineData[i];
+        d = d1;
+        mouseX = scaleX(i);
+        mouseY = 20;
+      } else {
+        // event from this module
+        mouseX = d3.mouse(ctx)[0];
+        mouseY = d3.mouse(ctx)[1];
+        x0 = scaleX.invert(mouseX);
+        i = bisectPosition(lineData, x0, 1);
+        d0 = lineData[i - 1];
+        d1 = lineData[i];
+        d = x0 - d0.i > d1.i - x0 ? d1 : d0;
+
+        // Reducer
+        dispatch(actions.coordinateDetail(d.i));
+      }
 
       tooltip.select('.v-line') // eslint-disable-line
-        .attr('transform', `translate(${scaleX(d.i)}, 0)`);
+        .attr('transform', `translate(${scaleX(d.i) + (rectWidth / 2)}, 0)`);
 
-      tooltip.select('.h-line') // eslint-disable-line
-        .attr('transform', `translate(0, ${scaleY(d.e / 2)})`);
+      // tooltip.select('.h-line') // eslint-disable-line
+      //   .attr('transform', `translate(0, ${scaleY(d.e / 2)})`);
 
       const entropyText = tooltip.select('text.t-entropy') // eslint-disable-line
         .text(`Shannon entropy: ${precise(d.e / 2)}`);
@@ -121,16 +142,26 @@ function Focus() {
 
     // tooltip
     const tooltip = svgEnter.append('g')
-      .style('display', 'none');
+      .style('display', 'none')
+      .attr('class', 'tooltipFocus');
 
     svgEnter.append('rect')
       .attr('width', W)
       .attr('height', H)
+      .attr('class', 'focusMouseCtx')
       .style('fill', 'none')
       .style('pointer-events', 'all')
-      .on('mouseover', () => { tooltip.style('display', null); })
-      .on('mouseout', () => { tooltip.style('display', 'none'); })
-      .on('mousemove', mouseMove);
+      .on('mouseover', () => {
+        tooltip.style('display', null);
+        d3.select('.tooltipAlign').style('display', null);
+      })
+      .on('mouseout', () => {
+        tooltip.style('display', 'none');
+        d3.select('.tooltipAlign').style('display', 'none');
+      })
+      .on('mousemove', function (d) {
+        mouseMove(this, null);
+      });
 
     tooltip.append('line')
       .attr('class', 'v-line')
@@ -138,15 +169,15 @@ function Focus() {
       .style('stroke-dasharray', '4,4')
       .style('opacity', 1)
       .attr('y1', 0)
-      .attr('y2', H);
+      .attr('y2', H + margin.b);
 
-    tooltip.append('line')
-      .attr('class', 'h-line')
-      .style('stroke', '#666')
-      .style('stroke-dasharray', '4,4')
-      .style('opacity', 1)
-      .attr('x1', 0)
-      .attr('x2', W);
+    // tooltip.append('line')
+    //   .attr('class', 'h-line')
+    //   .style('stroke', '#666')
+    //   .style('stroke-dasharray', '4,4')
+    //   .style('opacity', 1)
+    //   .attr('x1', 0)
+    //   .attr('x2', W);
 
     tooltip.append('text')
       .attr('class', 't-entropy')
@@ -165,6 +196,21 @@ function Focus() {
     // Disable brush stretching or generating a new brush
     d3.selectAll('.handle').style('pointer-events', 'none');
     d3.select('.brush').select('.overlay').attr('pointer-events', 'none');
+
+    const context = d3.select('.focusMouseCtx').node();
+    console.log(context);
+
+    setTimeout(() => {
+      const unsubscribeHover = observe(state => state.alignHover, (state, nextState) => {
+        console.log('position hovering on matrix inside focus', state);
+
+
+        mouseMove(context, state);
+
+        // console.log(context);
+      }, 500);
+    });
+
 
     const unsubscribe = observe(state => state.focus, (state, nextSate) => {
       const lower = Math.round(state.range[0]);

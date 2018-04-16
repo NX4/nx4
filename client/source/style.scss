@@ -36,28 +36,30 @@ h4 {
     cursor: pointer;
   }
 
+  .home {
+    // LOGO
+    img {
+      width: 15px;
+      margin-right: 5px;
+    }
+  }
+
   :not(:first-child) {
-      // width: 10%;
       margin: 0;
       padding: 0 5px;
-      // border: 1px red solid;
       border-left: 1px solid;
       border-left-color: #222;
       text-align: right;
     }
 
   .about {
-    width: 60px;
+    width: 50px;
   }
 
   .home {
-    width: 100px;
+    width: 60px;
     margin: 0 10px;
-    // border: 1px red solid;
-
-    i {
-      // background: url(./img/nx4_logo.svg);
-    }
+    text-align: center;
   }
 
   :nth-child(3) {

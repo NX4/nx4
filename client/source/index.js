@@ -2,11 +2,13 @@ import { get as fetch } from 'axios';
 import { select } from 'd3';
 import { getState, dispatch, observe } from './store';
 import './style.scss';
-// import logo from './img/nx4_logo.svg';
+import logo from './img/nx4_logo.svg';
 
 import Context from './modules/context';
 import Focus from './modules/focus';
 import Alignment from './modules/alignment';
+
+document.getElementById('logo').setAttribute('src', logo);
 
 const contextChart = Context();
 const focusChart = Focus();
