@@ -1,6 +1,6 @@
 import * as d3 from 'd3';
-import actions from '../actions/index';
-import { getState, dispatch, observe } from '../store';
+import actions from '../../actions/index';
+import { getState, dispatch, observe } from '../../store';
 
 function Context() {
   const margin = { t: 20, r: 20, b: 20, l: 40 };

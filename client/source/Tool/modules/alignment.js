@@ -1,7 +1,7 @@
 import * as d3 from 'd3';
 import { filter as _filter } from 'lodash';
-import actions from '../actions/index';
-import { getState, dispatch, observe } from '../store';
+import actions from '../../actions/index';
+import { getState, dispatch, observe } from '../../store';
 
 function Alignment() {
   const margin = { t: 40, r: 20, b: 20, l: 50 };

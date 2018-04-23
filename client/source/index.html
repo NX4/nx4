@@ -9,34 +9,7 @@
 </head>
 
 <body>
-  <ul class="navbar" role="navigation">
-    <li class="home">
-      <img id="logo" alt="">NX4</li>
-    <li class="seqId">Ebov alignment – 1823 samples</li>
-    <li class="about">ABOUT</li>
-    <li class="docs">DOCS</li>
-  </ul>
-  <div class="upload">
-    <form action="/api/upload" enctype="multipart/form-data" method="post" target="">
-      <input type="file" name="upload" multiple="multiple">
-      <label for="choose-file" class="upload-file"></label>
-      <input type="submit" value="Upload">
-    </form>
-  </div>
-  <div id="root"></div>
-  <div id="main-container">
-    <div class="context-main">
-      <h4 class="subheadings">Sequence overview</h4>
-      <div id="brush-container"></div>
-    </div>
-    <div class="focus-main">
-      <h4 class="subheadings">Filtered range</h4>
-      <div id="overview-container"></div>
-    </div>
-    <div class="alignment-main">
-      <div id="alignment-container"></div>
-    </div>
-  </div>
+  <div id="app"></div>
 </body>
 
 </html>
