@@ -18,6 +18,6 @@ module.exports = merge(common, {
       mangle: {
         except: ['$super', '$', 'exports', 'require'],
       },
-    })
+    }),
   ],
 });

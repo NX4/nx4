@@ -43,7 +43,6 @@ const config = {
           {
             fallback: 'style-loader',
             use: ['css-loader', 'sass-loader'],
-            publicPath: '/dist/static',
           }),
       },
       { test: /\.json$/, use: 'json-loader' },
