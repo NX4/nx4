@@ -6,10 +6,10 @@ const app = express();
 
 app.use('/api', require('./remotes'));
 
-app.use(express.static(path.join(__dirname, 'client/built/static')));
+app.use(express.static(path.join(__dirname, 'client/built')));
 
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname + '/client/built/static/index.html'));
+  res.sendFile(path.join(__dirname + '/client/built/index.html'));
 });
 
 const port = process.env.PORT || 8000;
