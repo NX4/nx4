@@ -53,10 +53,21 @@ function Context() {
         .append('g')
         .attr('transform', `translate(${margin.l}, ${margin.t})`);
 
-    const brush = d3.brushX()
+    let brush = d3.brushX()
       .extent([[0, 0], [W, H]])
       .on('end', brushed) // eslint-disable-line
       .on('brush', brushedForOverview); // eslint-disable-line
+
+    // setTimeout(() => {
+    //   console.log('event removed');
+    //   brush.on('end', null);
+    //   brush.on('brush', null);
+    //   }, 3000);    
+
+    if (clear) {
+      brush.on('end', null);
+      brush.on('brush', null);
+    }
 
     const context = svgEnter.append('g')
       .attr('class', 'mainContext');

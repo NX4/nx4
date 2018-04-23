@@ -163,6 +163,12 @@ function Focus() {
         mouseMove(this, null);
       });
 
+    if (clear) {
+      svgEnter.on('mouseover', null);
+      svgEnter.on('mouseout', null);
+      svgEnter.on('mousemove', null);
+    }
+
     tooltip.append('line')
       .attr('class', 'v-line')
       .style('stroke', '#666')

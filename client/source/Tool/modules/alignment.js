@@ -86,6 +86,12 @@ function Alignment() {
         mouseMove(d, 'pos');
       });
 
+    if (clear) {
+      basepairsEnter.on('mouseover', null);
+      basepairsEnter.on('mouseout', null);
+      basepairsEnter.on('mousemove', null);
+    }
+
     function mouseMove(d, key) {
       const column = _filter(filteredData, o => o.pos === d[key]);
       scaleX.domain([filteredData[0].pos, filteredData[0].pos + totalRects]);
