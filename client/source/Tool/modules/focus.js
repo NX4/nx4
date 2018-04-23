@@ -12,7 +12,7 @@ function Focus() {
   const bisectPosition = d3.bisector(d => d.i).left;
   const rectWidth = 8;
 
-  function exports(selection) {
+  function exports(selection, clear) {
     W = W || selection.node().clientWidth - margin.l - margin.r;
     H = H || selection.node().clientHeight - margin.t - margin.b;
     const lineData = selection.datum() ? selection.datum() : [];
@@ -200,11 +200,11 @@ function Focus() {
     const context = d3.select('.focusMouseCtx').node();
     console.log(context);
 
+
+    let unsubscribeHover;
     setTimeout(() => {
-      const unsubscribeHover = observe(state => state.alignHover, (state, nextState) => {
+      unsubscribeHover = observe(state => state.alignHover, (state, nextState) => {
         console.log('position hovering on matrix inside focus', state);
-
-
         mouseMove(context, state);
 
         // console.log(context);
@@ -220,6 +220,13 @@ function Focus() {
       d3.select('#someid').attr('d', lines);
       focus.select('.axis--x').call(xAxis);
     });
+
+    if (clear) {
+      unsubscribe();
+      setTimeout(() => {
+        unsubscribeHover(), 600});
+    }
+
   }
 
   return exports;

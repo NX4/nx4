@@ -28,7 +28,7 @@ function Alignment() {
   * exports() returns a compound alignment chart
   * based on the passed-in d3 selection
   */
-  function exports(selection) {
+  function exports(selection, clear) {
     W = W || selection.node().clientWidth - margin.l - margin.r;
     H = H || selection.node().clientHeight - margin.t - margin.b;
     const alignData = selection.datum() ? selection.datum() : [];
@@ -188,8 +188,9 @@ function Alignment() {
       .text('-%')
       .attr('transform', d => `translate(${-2}, ${scaleY(d) + (rectHeight / 2) + 4})`);
 
+    let unsubscribeHover;
     setTimeout(() => {
-      const unsubscribeHover = observe(state => state.detailHover, (state, nextState) => {
+      unsubscribeHover = observe(state => state.detailHover, (state, nextState) => {
         mouseMove(state, 'position');
       }, 300);
     });
@@ -211,6 +212,11 @@ function Alignment() {
         } return color(d.value);
       });
     });
+    if(clear) {
+      setTimeout(() => {
+        unsubscribeHover(), 400});
+      unsubscribe();
+    }
   }
 
   return exports;

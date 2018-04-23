@@ -1,5 +1,5 @@
-const fastaParser = require("biojs-io-fasta");
-const fs = require("fs");
+const fastaParser = require('biojs-io-fasta');
+const fs = require('fs');
 
 // Define globals
 let fastaTotal;
@@ -41,7 +41,7 @@ function parseData(array) {
       let gaps = 0;
       let ambiguity = 0;
       for (let t = 0; t < array.length; t++) {
-        if (array[t].charAt(i) == "-") {
+        if (array[t].charAt(i) == '-') {
           gaps += 1;
         } else if (Object.keys(obj).indexOf(array[t].charAt(i)) === -1) {
           ambiguity += 1;
@@ -71,8 +71,8 @@ function parseData(array) {
   });
 }
 
-function init(data) {
-  if (data) {
+function init(data, file) {
+  if (data && data !== null) {
     return new Promise(resolve => {
       const seqs = fastaParser.parse(data);
       fastaTotal = seqs.length;
@@ -86,25 +86,26 @@ function init(data) {
     });
   }
   return new Promise(resolve => {
-    // fs.readFile(`${__dirname}/data/MuV-MDPH.aligned.pruned.fasta`, 'utf8', (err, data) => {
-    fs.readFile(
-      `${__dirname}/data/171020-KGA_RAxML_bipartitions.ebov_alignment_red.fasta`,
-      "utf8",
-      (err, data) => {
-        if (err) {
-          return console.log(err);
-        }
-        const seqs = fastaParser.parse(data);
-        fastaTotal = seqs.length;
-        arraySeqs(seqs).then(arr => {
-          parseData(arr).then(res => {
-            console.log(res.length);
-            console.log(`All ${res[0].length} positions done`);
-            resolve(res);
-          });
-        });
+    let filePath;
+    if (file == 'ebola') {
+      filePath = `${__dirname}/data/171020-KGA_RAxML_bipartitions.ebov_alignment_red.fasta`;
+    }
+    if (file == 'muv') {
+      filePath = `${__dirname}/data/MuV-MDPH.aligned.pruned.fasta`;
+    }
+    fs.readFile(filePath, 'utf8', (err, data) => {
+      if (err) {
+        return console.log(err);
       }
-    );
+      const seqs = fastaParser.parse(data);
+      fastaTotal = seqs.length;
+      arraySeqs(seqs).then(arr => {
+        parseData(arr).then(res => {
+          console.log(file, res.length, `All ${res[0].length} positions done`);
+          resolve(res);
+        });
+      });
+    });
   });
 }
 

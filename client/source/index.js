@@ -1,7 +1,7 @@
 // import dependencies
 import React from 'react';
 import { render } from 'react-dom';
-import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { getState, dispatch, observe } from './store';
 // import main components
 import Home from './Home';
@@ -15,8 +15,10 @@ const AppRouter = () => (
   <Router>
     <div>
       <Navbar />
-      <Route path="/" exact component={Home} />
-      <Route path="/tool" component={Tool} />
+      <Switch>
+        <Route path="/" exact component={Home} />
+        <Route path="/tool/:sample" component={Tool} />
+      </Switch>
     </div>
   </Router>
 );
