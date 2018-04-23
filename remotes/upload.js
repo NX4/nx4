@@ -1,5 +1,7 @@
 const express = require("express");
 const formidable = require("formidable");
+const controllers = require("../controllers");
+
 util = require("util");
 fs = require("fs");
 
@@ -9,9 +11,10 @@ router.post("/", (req, res) => {
   var form = new formidable.IncomingForm();
 
   form.parse(req, function(err, fields, files) {
-    res.writeHead(200, { "content-type": "text/plain" });
-    fs.readFile(files.upload.path, function (err, data) {
-      res.end(data);
+    fs.readFile(files.upload.path, "utf8", (err, data) => {
+      controllers.entropy(data).then(responce => {
+        res.send(responce);
+      });
     });
   });
 });
