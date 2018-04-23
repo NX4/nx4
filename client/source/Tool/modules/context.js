@@ -1,6 +1,6 @@
 import * as d3 from 'd3';
-import actions from '../actions/index';
-import { getState, dispatch, observe } from '../store';
+import actions from '../../actions/index';
+import { getState, dispatch, observe } from '../../store';
 
 function Context() {
   const margin = { t: 20, r: 20, b: 20, l: 40 };
@@ -16,7 +16,7 @@ function Context() {
   * exports() returns a new line chart
   * based on the passed-in d3 selection
   */
-  function exports(selection) {
+  function exports(selection, clear) {
     W = W || selection.node().clientWidth - margin.l - margin.r;
     H = H || selection.node().clientHeight - margin.t - margin.b;
     const lineData = selection.datum() ? selection.datum() : [];
@@ -87,6 +87,10 @@ function Context() {
     const unsubscribe = observe(state => state.alignment, (state) => {
       brushEl.call(brush.move, [0, state.rectCount].map(scaleX));
     });
+
+    if (clear) {
+      unsubscribe();
+    }
 
     // Interactive functions
     function brushed() {
