@@ -65,6 +65,7 @@ function Context() {
     //   }, 3000);    
 
     if (clear) {
+      //changelog
       brush.on('end', null);
       brush.on('brush', null);
     }

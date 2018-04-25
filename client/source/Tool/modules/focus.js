@@ -164,6 +164,7 @@ function Focus() {
       });
 
     if (clear) {
+      //changelog
       svgEnter.on('mouseover', null);
       svgEnter.on('mouseout', null);
       svgEnter.on('mousemove', null);
