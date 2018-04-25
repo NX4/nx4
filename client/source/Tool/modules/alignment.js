@@ -87,6 +87,7 @@ function Alignment() {
       });
 
     if (clear) {
+      //changelog
       basepairsEnter.on('mouseover', null);
       basepairsEnter.on('mouseout', null);
       basepairsEnter.on('mousemove', null);
