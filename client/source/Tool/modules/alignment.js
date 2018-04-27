@@ -3,35 +3,35 @@ import { filter as _filter } from 'lodash';
 import actions from '../../actions/index';
 import { getState, dispatch, observe } from '../../store';
 
-function Alignment() {
-  const margin = { t: 40, r: 20, b: 20, l: 50 };
-  let W;
-  let H;
-  const scaleX = d3.scaleLinear();
-  const scaleY = d3.scaleOrdinal();
-  const aminos = ['A', 'C', 'G', 'T', 'N'];
-  const rectWidth = 8;
-  const rectHeight = 25;
-  const scaleYRange = d3.range(0, rectHeight * 5, rectHeight + 5);
-  let totalRects;
-  let filteredData;
-  const smallPerc = '\uFE6A';
+const margin = { t: 40, r: 20, b: 20, l: 50 };
+let W;
+let H;
+const scaleX = d3.scaleLinear();
+const scaleY = d3.scaleOrdinal();
+const aminos = ['A', 'C', 'G', 'T', 'N'];
+const rectWidth = 8;
+const rectHeight = 25;
+const scaleYRange = d3.range(0, rectHeight * 5, rectHeight + 5);
+let totalRects;
+let filteredData;
+const smallPerc = '\uFE6A';
 
-  const color = d3.scaleLinear()
-    .domain([1, 50, 99])
-    .interpolate(d3.interpolateLab)
-    .range([d3.rgb('#f3cbd3'), d3.rgb('#6c2167'), d3.rgb('#f3cbd3')]);
+const color = d3.scaleLinear()
+  .domain([1, 50, 99])
+  .interpolate(d3.interpolateLab)
+  .range([d3.rgb('#f3cbd3'), d3.rgb('#6c2167'), d3.rgb('#f3cbd3')]);
 
-  const bisectPosition = d3.bisector(d => d.pos).left;
+const bisectPosition = d3.bisector(d => d.pos).left;
 
   /**
   * exports() returns a compound alignment chart
   * based on the passed-in d3 selection
   */
-  function exports(selection, clear) {
+  function exportss(node, data, clear) {
+    const selection = d3.select(node);
     W = W || selection.node().clientWidth - margin.l - margin.r;
     H = H || selection.node().clientHeight - margin.t - margin.b;
-    const alignData = selection.datum() ? selection.datum() : [];
+    const alignData = data ? data : [];
 
     // calculate width
     totalRects = Math.floor(W / rectWidth);
@@ -197,12 +197,12 @@ function Alignment() {
 
     let unsubscribeHover;
     setTimeout(() => {
-      unsubscribeHover = observe(state => state.detailHover, (state, nextState) => {
+      this.unsubscribeHover = observe(state => state.detailHover, (state, nextState) => {
         mouseMove(state, 'position');
       }, 300);
     });
 
-    const unsubscribe = observe(state => state.focus, (state, nextSate) => {
+    this.unsubscribe = observe(state => state.focus, (state, nextSate) => {
       const lower = Math.round(state.range[0]);
       const upper = Math.round(state.range[1]);
 
@@ -226,7 +226,10 @@ function Alignment() {
     }
   }
 
-  return exports;
+const viz = {
+  exportss,
+  unsubscribe: null,
+  unsubscribeHover: null
 }
 
-export default Alignment;
+export default viz;

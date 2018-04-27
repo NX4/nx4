@@ -2,8 +2,8 @@ import * as d3 from 'd3';
 import actions from '../../actions/index';
 import { getState, dispatch, observe } from '../../store';
 
-function Focus() {
-  const margin = { t: 20, r: 20, b: 40, l: 50 };
+  function exportss(node, data, clear) {
+    const margin = { t: 20, r: 20, b: 40, l: 50 };
   let W;
   let H;
 
@@ -11,11 +11,10 @@ function Focus() {
   const scaleY = d3.scaleLinear();
   const bisectPosition = d3.bisector(d => d.i).left;
   const rectWidth = 8;
-
-  function exports(selection, clear) {
+    const selection = d3.select(node);
     W = W || selection.node().clientWidth - margin.l - margin.r;
     H = H || selection.node().clientHeight - margin.t - margin.b;
-    const lineData = selection.datum() ? selection.datum() : [];
+    const lineData = data ? data : [];
 
     // Scales
     scaleX
@@ -207,10 +206,8 @@ function Focus() {
     const context = d3.select('.focusMouseCtx').node();
     console.log(context);
 
-
-    let unsubscribeHover;
     setTimeout(() => {
-      unsubscribeHover = observe(state => state.alignHover, (state, nextState) => {
+      this.unsubscribeHover = observe(state => state.alignHover, (state, nextState) => {
         console.log('position hovering on matrix inside focus', state);
         mouseMove(context, state);
 
@@ -219,7 +216,7 @@ function Focus() {
     });
 
 
-    const unsubscribe = observe(state => state.focus, (state, nextSate) => {
+    this.unsubscribe = observe(state => state.focus, (state, nextSate) => {
       const lower = Math.round(state.range[0]);
       const upper = Math.round(state.range[1]);
 
@@ -236,7 +233,10 @@ function Focus() {
 
   }
 
-  return exports;
+const viz = {
+  exportss, 
+  unsubscribe: null,
+  unsubscribeHover: null
 }
 
-export default Focus;
+export default viz;

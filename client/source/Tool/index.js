@@ -17,24 +17,31 @@ export default class Tool extends Component {
 
   generateViz(gData, entropyData) {
     this.contextChart = Context();
-    this.focusChart = Focus();
-    this.alignmentChart = Alignment();
+    this.focusChart = Focus;
+    this.alignmentChart = Alignment;
 
     select('#brush-container')
       .datum(entropyData)
       .call(this.contextChart);
-    select('#overview-container')
-      .datum(entropyData)
-      .call(this.focusChart);
-    select('#alignment-container')
-      .datum(gData)
-      .call(this.alignmentChart);
+    // select('#overview-container')
+    //   .datum(entropyData)
+    //   .call(this.focusChart);
+    this.focusChart.exportss('#overview-container', entropyData)      
+    this.alignmentChart.exportss('#alignment-container', gData)
+    // select('#alignment-container')
+    //   .datum(gData)
+    //   .call(this.alignmentChart);
   }
 
   componentWillUnmount() {
     select('#brush-container').call(this.contextChart, [], true);
-    select('#overview-container').call(this.focusChart, [], true)
-    select('#alignment-container').call(this.alignmentChart, [], true)
+    // select('#overview-container').call(this.focusChart, [], true)
+    // select('#alignment-container').call(this.alignmentChart, [], true)
+    this.focusChart.unsubscribeHover();
+    this.focusChart.unsubscribe();
+
+    this.alignmentChart.unsubscribeHover();
+    this.alignmentChart.unsubscribe();
     selectAll('svg').remove();
   }
 
