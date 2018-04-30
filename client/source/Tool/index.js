@@ -18,19 +18,14 @@ export default class Tool extends Component {
   generateViz(gData, entropyData) {
     this.contextChart = Context();
     this.focusChart = Focus;
-    this.alignmentChart = Alignment;
+    this.alignmentChart = new Alignment('#alignment-container');
 
     select('#brush-container')
       .datum(entropyData)
       .call(this.contextChart);
-    // select('#overview-container')
-    //   .datum(entropyData)
-    //   .call(this.focusChart);
+
     this.focusChart.exportss('#overview-container', entropyData)      
-    this.alignmentChart.exportss('#alignment-container', gData)
-    // select('#alignment-container')
-    //   .datum(gData)
-    //   .call(this.alignmentChart);
+    this.alignmentChart.render(gData);
   }
 
   componentWillUnmount() {
@@ -40,8 +35,7 @@ export default class Tool extends Component {
     this.focusChart.unsubscribeHover();
     this.focusChart.unsubscribe();
 
-    this.alignmentChart.unsubscribeHover();
-    this.alignmentChart.unsubscribe();
+    this.alignmentChart.unmountViz();
     selectAll('svg').remove();
   }
 

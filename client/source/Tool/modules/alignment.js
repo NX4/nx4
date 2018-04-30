@@ -23,19 +23,30 @@ const color = d3.scaleLinear()
 
 const bisectPosition = d3.bisector(d => d.pos).left;
 
-  /**
-  * exports() returns a compound alignment chart
-  * based on the passed-in d3 selection
-  */
-  function exportss(node, data, clear) {
-    const selection = d3.select(node);
-    W = W || selection.node().clientWidth - margin.l - margin.r;
-    H = H || selection.node().clientHeight - margin.t - margin.b;
+
+export default class Alignment {
+  constructor(node) {
+    this.selection = d3.select(node);
+    this.unsubscribe;
+    this.unsubscribeHover;
+    this.basepairsEnter;
+  }
+
+  unmountViz() {
+    this.unsubscribe();
+    this.unsubscribeHover();
+    this.basepairsEnter.on('mouseover', null);
+    this.basepairsEnter.on('mouseout', null);
+    this.basepairsEnter.on('mousemove', null);
+  }
+
+  render(data) {
+    W = W || this.selection.node().clientWidth - margin.l - margin.r;
+    H = H || this.selection.node().clientHeight - margin.t - margin.b;
     const alignData = data ? data : [];
 
     // calculate width
     totalRects = Math.floor(W / rectWidth);
-
     dispatch(actions.setRectCount(totalRects));
 
     // Scales
@@ -52,7 +63,7 @@ const bisectPosition = d3.bisector(d => d.pos).left;
     const yAxisAlignment = d3.axisLeft(scaleY).ticks(2);
 
     // SVG initializer
-    const svg = selection.selectAll('svg')
+    const svg = this.selection.selectAll('svg')
       .data([0]);
 
     const svgEnter = svg.enter()
@@ -66,7 +77,7 @@ const bisectPosition = d3.bisector(d => d.pos).left;
     const basepairs = svgEnter.selectAll('rect')
       .data(alignData.slice(0, totalRects * 5));
 
-    const basepairsEnter = basepairs.enter().append('rect')
+    this.basepairsEnter = basepairs.enter().append('rect')
       .attr('class', 'rectangle')
       .attr('x', d => scaleX(d.pos))
       .attr('width', rectWidth)
@@ -85,13 +96,6 @@ const bisectPosition = d3.bisector(d => d.pos).left;
         dispatch(actions.alignmentDetail(d.pos));
         mouseMove(d, 'pos');
       });
-
-    if (clear) {
-      //changelog
-      basepairsEnter.on('mouseover', null);
-      basepairsEnter.on('mouseout', null);
-      basepairsEnter.on('mousemove', null);
-    }
 
     function mouseMove(d, key) {
       const column = _filter(filteredData, o => o.pos === d[key]);
@@ -129,27 +133,11 @@ const bisectPosition = d3.bisector(d => d.pos).left;
       .attr('x2', '100%')
       .attr('y2', '0%');
 
-    // start color (0%)
-    // linearGradient.append('stop')
-    //   .attr('offset', '0%')
-    //   .attr('stop-color', '#f3cbd3');
-
-    // // end color (100%)
-    // linearGradient.append('stop')
-    //   .attr('offset', '100%')
-    //   .attr('stop-color', '#6c2167');
-
     linearGradient.selectAll('stop')
       .data(color.range())
       .enter().append('stop')
       .attr('offset', (d, i) => i / (color.range().length - 1))
       .attr('stop-color', d => d);
-
-    // keyContainer.append('rect')
-    //   .attr('width', 250)
-    //   .attr('height', 10)
-    //   .style('fill', 'url(#linear-gradient)')
-    //   .attr('transform', `translate(300, ${-margin.t})`);
 
     d3.select('#alignment-container').selectAll('line').style('display', 'none');
 
@@ -195,7 +183,6 @@ const bisectPosition = d3.bisector(d => d.pos).left;
       .text('-%')
       .attr('transform', d => `translate(${-2}, ${scaleY(d) + (rectHeight / 2) + 4})`);
 
-    let unsubscribeHover;
     setTimeout(() => {
       this.unsubscribeHover = observe(state => state.detailHover, (state, nextState) => {
         mouseMove(state, 'position');
@@ -208,9 +195,9 @@ const bisectPosition = d3.bisector(d => d.pos).left;
 
       filteredData = _filter(alignData, o => o.pos >= lower && o.pos < upper);
 
-      basepairsEnter.data(filteredData);
+      this.basepairsEnter.data(filteredData);
 
-      basepairsEnter.transition().duration(10)
+      this.basepairsEnter.transition().duration(10)
       .attr('fill', (d) => {
         if (d.value < color.domain()[0]) {
           return '#f2f2f2';
@@ -219,17 +206,6 @@ const bisectPosition = d3.bisector(d => d.pos).left;
         } return color(d.value);
       });
     });
-    if(clear) {
-      setTimeout(() => {
-        unsubscribeHover(), 400});
-      unsubscribe();
-    }
   }
+};
 
-const viz = {
-  exportss,
-  unsubscribe: null,
-  unsubscribeHover: null
-}
-
-export default viz;
