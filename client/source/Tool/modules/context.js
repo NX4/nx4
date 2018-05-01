@@ -2,25 +2,29 @@ import * as d3 from 'd3';
 import actions from '../../actions/index';
 import { getState, dispatch, observe } from '../../store';
 
-function Context() {
-  const margin = { t: 20, r: 20, b: 20, l: 40 };
-  let W;
-  let H;
-  const scaleX = d3.scaleLinear();
-  const scaleY = d3.scaleLinear();
+const margin = { t: 20, r: 20, b: 20, l: 40 };
+const scaleX = d3.scaleLinear();
+const scaleY = d3.scaleLinear();
+const ticks = scaleY.ticks(2);
+const tickFormat = scaleY.tickFormat('.%');
 
-  const ticks = scaleY.ticks(2);
-  const tickFormat = scaleY.tickFormat('.%');
+export default class Context {
+  constructor(node) {
+    this.selection = d3.select(node);
+    this.unsubscribe = () => {};
+    this.brush;
+  }
 
-  /**
-  * exports() returns a new line chart
-  * based on the passed-in d3 selection
-  */
-  function exports(selection, clear) {
-    W = W || selection.node().clientWidth - margin.l - margin.r;
-    H = H || selection.node().clientHeight - margin.t - margin.b;
-    const lineData = selection.datum() ? selection.datum() : [];
+  unmountViz() {
+    this.unsubscribe();
+    this.brush.on('end', null);
+    this.brush.on('brush', null);
+  }
 
+  render(data) {
+    const W = W || this.selection.node().clientWidth - margin.l - margin.r;
+    const H = H || this.selection.node().clientHeight - margin.t - margin.b;
+    const lineData = data ? data : [];
 
     // Scales
     scaleX
@@ -42,7 +46,7 @@ function Context() {
       .curve(d3.curveStepAfter);
 
     // SVG initializer
-    const svg = selection.selectAll('svg')
+    const svg = this.selection.selectAll('svg')
       .data([0]);
 
     const svgEnter = svg.enter()
@@ -53,22 +57,10 @@ function Context() {
         .append('g')
         .attr('transform', `translate(${margin.l}, ${margin.t})`);
 
-    let brush = d3.brushX()
+    this.brush = d3.brushX()
       .extent([[0, 0], [W, H]])
       .on('end', brushed) // eslint-disable-line
       .on('brush', brushedForOverview); // eslint-disable-line
-
-    // setTimeout(() => {
-    //   console.log('event removed');
-    //   brush.on('end', null);
-    //   brush.on('brush', null);
-    //   }, 3000);    
-
-    if (clear) {
-      //changelog
-      brush.on('end', null);
-      brush.on('brush', null);
-    }
 
     const context = svgEnter.append('g')
       .attr('class', 'mainContext');
@@ -94,15 +86,11 @@ function Context() {
 
     const brushEl = svgEnter.append('g')
       .attr('class', 'brush')
-      .call(brush);
+      .call(this.brush);
 
-    const unsubscribe = observe(state => state.alignment, (state) => {
-      brushEl.call(brush.move, [0, state.rectCount].map(scaleX));
+    this.unsubscribe = observe(state => state.alignment, (state) => {
+      brushEl.call(this.brush.move, [0, state.rectCount].map(scaleX));
     });
-
-    if (clear) {
-      unsubscribe();
-    }
 
     // Interactive functions
     function brushed() {
@@ -124,9 +112,6 @@ function Context() {
       dispatch(actions.updateFocus(newRange, domain));
       dispatch(actions.updateRecs(newRange, domain));
     }
-  } // exports()
+  }
 
-  return exports;
-} // Context()
-
-export default Context;
+}

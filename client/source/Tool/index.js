@@ -7,7 +7,6 @@ import Focus from './modules/focus';
 import Alignment from './modules/alignment';
 
 export default class Tool extends Component {
-
   constructor(props) {
     super(props);
     this.contextChart;
@@ -16,25 +15,18 @@ export default class Tool extends Component {
   }
 
   generateViz(gData, entropyData) {
-    this.contextChart = Context();
-    this.focusChart = Focus;
+    this.contextChart = new Context('#brush-container');
+    this.focusChart = new Focus('#overview-container');
     this.alignmentChart = new Alignment('#alignment-container');
 
-    select('#brush-container')
-      .datum(entropyData)
-      .call(this.contextChart);
-
-    this.focusChart.exportss('#overview-container', entropyData)      
+    this.contextChart.render(entropyData);
+    this.focusChart.render(entropyData);
     this.alignmentChart.render(gData);
   }
 
   componentWillUnmount() {
-    select('#brush-container').call(this.contextChart, [], true);
-    // select('#overview-container').call(this.focusChart, [], true)
-    // select('#alignment-container').call(this.alignmentChart, [], true)
-    this.focusChart.unsubscribeHover();
-    this.focusChart.unsubscribe();
-
+    this.contextChart.unmountViz();
+    this.focusChart.unmountViz();
     this.alignmentChart.unmountViz();
     selectAll('svg').remove();
   }

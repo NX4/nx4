@@ -4,8 +4,6 @@ import actions from '../../actions/index';
 import { getState, dispatch, observe } from '../../store';
 
 const margin = { t: 40, r: 20, b: 20, l: 50 };
-let W;
-let H;
 const scaleX = d3.scaleLinear();
 const scaleY = d3.scaleOrdinal();
 const aminos = ['A', 'C', 'G', 'T', 'N'];
@@ -28,8 +26,8 @@ export default class Alignment {
   constructor(node) {
     this.selection = d3.select(node);
     this.unsubscribe;
-    this.unsubscribeHover;
-    this.basepairsEnter;
+    this.unsubscribe = () => {};
+    this.unsubscribeHover = () => {};
   }
 
   unmountViz() {
@@ -41,8 +39,8 @@ export default class Alignment {
   }
 
   render(data) {
-    W = W || this.selection.node().clientWidth - margin.l - margin.r;
-    H = H || this.selection.node().clientHeight - margin.t - margin.b;
+    const W = W || this.selection.node().clientWidth - margin.l - margin.r;
+    const H = H || this.selection.node().clientHeight - margin.t - margin.b;
     const alignData = data ? data : [];
 
     // calculate width
