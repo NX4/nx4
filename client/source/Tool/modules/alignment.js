@@ -1,41 +1,50 @@
 import * as d3 from 'd3';
 import { filter as _filter } from 'lodash';
-import actions from '../actions/index';
-import { getState, dispatch, observe } from '../store';
+import actions from '../../actions/index';
+import { getState, dispatch, observe } from '../../store';
 
-function Alignment() {
-  const margin = { t: 40, r: 20, b: 20, l: 50 };
-  let W;
-  let H;
-  const scaleX = d3.scaleLinear();
-  const scaleY = d3.scaleOrdinal();
-  const aminos = ['A', 'C', 'G', 'T', 'N'];
-  const rectWidth = 8;
-  const rectHeight = 25;
-  const scaleYRange = d3.range(0, rectHeight * 5, rectHeight + 5);
-  let totalRects;
-  let filteredData;
-  const smallPerc = '\uFE6A';
+const margin = { t: 40, r: 20, b: 20, l: 50 };
+const scaleX = d3.scaleLinear();
+const scaleY = d3.scaleOrdinal();
+const aminos = ['A', 'C', 'G', 'T', 'N'];
+const rectWidth = 8;
+const rectHeight = 25;
+const scaleYRange = d3.range(0, rectHeight * 5, rectHeight + 5);
+let totalRects;
+let filteredData;
+const smallPerc = '\uFE6A';
 
-  const color = d3.scaleLinear()
-    .domain([1, 50, 99])
-    .interpolate(d3.interpolateLab)
-    .range([d3.rgb('#f3cbd3'), d3.rgb('#6c2167'), d3.rgb('#f3cbd3')]);
+const color = d3.scaleLinear()
+  .domain([1, 50, 99])
+  .interpolate(d3.interpolateLab)
+  .range([d3.rgb('#f3cbd3'), d3.rgb('#6c2167'), d3.rgb('#f3cbd3')]);
 
-  const bisectPosition = d3.bisector(d => d.pos).left;
+const bisectPosition = d3.bisector(d => d.pos).left;
 
-  /**
-  * exports() returns a compound alignment chart
-  * based on the passed-in d3 selection
-  */
-  function exports(selection) {
-    W = W || selection.node().clientWidth - margin.l - margin.r;
-    H = H || selection.node().clientHeight - margin.t - margin.b;
-    const alignData = selection.datum() ? selection.datum() : [];
+
+export default class Alignment {
+  constructor(node) {
+    this.selection = d3.select(node);
+    this.unsubscribe;
+    this.unsubscribe = () => {};
+    this.unsubscribeHover = () => {};
+  }
+
+  unmountViz() {
+    this.unsubscribe();
+    this.unsubscribeHover();
+    this.basepairsEnter.on('mouseover', null);
+    this.basepairsEnter.on('mouseout', null);
+    this.basepairsEnter.on('mousemove', null);
+  }
+
+  render(data) {
+    const W = W || this.selection.node().clientWidth - margin.l - margin.r;
+    const H = H || this.selection.node().clientHeight - margin.t - margin.b;
+    const alignData = data ? data : [];
 
     // calculate width
     totalRects = Math.floor(W / rectWidth);
-
     dispatch(actions.setRectCount(totalRects));
 
     // Scales
@@ -52,7 +61,7 @@ function Alignment() {
     const yAxisAlignment = d3.axisLeft(scaleY).ticks(2);
 
     // SVG initializer
-    const svg = selection.selectAll('svg')
+    const svg = this.selection.selectAll('svg')
       .data([0]);
 
     const svgEnter = svg.enter()
@@ -66,7 +75,7 @@ function Alignment() {
     const basepairs = svgEnter.selectAll('rect')
       .data(alignData.slice(0, totalRects * 5));
 
-    const basepairsEnter = basepairs.enter().append('rect')
+    this.basepairsEnter = basepairs.enter().append('rect')
       .attr('class', 'rectangle')
       .attr('x', d => scaleX(d.pos))
       .attr('width', rectWidth)
@@ -122,27 +131,11 @@ function Alignment() {
       .attr('x2', '100%')
       .attr('y2', '0%');
 
-    // start color (0%)
-    // linearGradient.append('stop')
-    //   .attr('offset', '0%')
-    //   .attr('stop-color', '#f3cbd3');
-
-    // // end color (100%)
-    // linearGradient.append('stop')
-    //   .attr('offset', '100%')
-    //   .attr('stop-color', '#6c2167');
-
     linearGradient.selectAll('stop')
       .data(color.range())
       .enter().append('stop')
       .attr('offset', (d, i) => i / (color.range().length - 1))
       .attr('stop-color', d => d);
-
-    // keyContainer.append('rect')
-    //   .attr('width', 250)
-    //   .attr('height', 10)
-    //   .style('fill', 'url(#linear-gradient)')
-    //   .attr('transform', `translate(300, ${-margin.t})`);
 
     d3.select('#alignment-container').selectAll('line').style('display', 'none');
 
@@ -189,20 +182,20 @@ function Alignment() {
       .attr('transform', d => `translate(${-2}, ${scaleY(d) + (rectHeight / 2) + 4})`);
 
     setTimeout(() => {
-      const unsubscribeHover = observe(state => state.detailHover, (state, nextState) => {
+      this.unsubscribeHover = observe(state => state.detailHover, (state, nextState) => {
         mouseMove(state, 'position');
       }, 300);
     });
 
-    const unsubscribe = observe(state => state.focus, (state, nextSate) => {
+    this.unsubscribe = observe(state => state.focus, (state, nextSate) => {
       const lower = Math.round(state.range[0]);
       const upper = Math.round(state.range[1]);
 
       filteredData = _filter(alignData, o => o.pos >= lower && o.pos < upper);
 
-      basepairsEnter.data(filteredData);
+      this.basepairsEnter.data(filteredData);
 
-      basepairsEnter.transition().duration(10)
+      this.basepairsEnter.transition().duration(10)
       .attr('fill', (d) => {
         if (d.value < color.domain()[0]) {
           return '#f2f2f2';
@@ -212,8 +205,5 @@ function Alignment() {
       });
     });
   }
+};
 
-  return exports;
-}
-
-export default Alignment;

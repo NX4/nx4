@@ -8,7 +8,8 @@ const config = {
   entry: './source/index.js',
   output: {
     filename: '[name].bundle.js',
-    path: path.resolve(__dirname, 'built/static'),
+    path: path.resolve(__dirname, 'built'),
+    publicPath: '/',
   },
   module: {
     rules: [
@@ -17,7 +18,7 @@ const config = {
         loader: 'babel-loader',
         exclude: /node_modules/,
         query: {
-          presets: ['es2016', 'es2017', 'react'],
+          presets: ['react', 'env'],
           env: {
             production: {
               plugins: [
@@ -30,7 +31,6 @@ const config = {
                 'transform-remove-debugger',
                 'transform-undefined-to-void',
               ],
-              presets: ['es2015'],
             },
             development: {
               plugins: ['transform-es2015-modules-commonjs'],
@@ -44,7 +44,6 @@ const config = {
           {
             fallback: 'style-loader',
             use: ['css-loader', 'sass-loader'],
-            publicPath: '/dist/static',
           }),
       },
       { test: /\.json$/, use: 'json-loader' },

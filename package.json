@@ -5,7 +5,8 @@
   "author": "Carlos Cruz @carcruz & Antonio Solano @jotasolano",
   "license": "MIT",
   "engines": {
-    "node": "6.9.5"
+    "node": "6.9.5",
+    "npm": "3.10.10"
   },
   "scripts": {
     "dev": "nodemon server.js",
@@ -15,6 +16,7 @@
   "dependencies": {
     "biojs-io-fasta": "^0.1.17",
     "express": "^4.16.2",
+    "formidable": "^1.2.1",
     "memoizee": "0.4.11"
   },
   "devDependencies": {
