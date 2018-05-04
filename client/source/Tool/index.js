@@ -32,10 +32,7 @@ export default class Tool extends Component {
   }
 
   componentDidMount() {
-    const { sample } = this.props.match.params;
-    fetch(`/api/entropy/${sample}`).then(response => {
-      this.generateViz(response.data[0], response.data[1]);
-    });
+      this.generateViz(this.props.data[0], this.props.data[1]);
   }
 
   render() {

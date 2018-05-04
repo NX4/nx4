@@ -1,6 +1,5 @@
 const express = require('express');
 const path = require('path');
-const controllers = require('./controllers');
 
 const app = express();
 

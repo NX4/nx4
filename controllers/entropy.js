@@ -78,7 +78,6 @@ function init(data, file) {
       fastaTotal = seqs.length;
       arraySeqs(seqs).then(arr => {
         parseData(arr).then(res => {
-          console.log(res.length);
           console.log(`All ${res[0].length} positions done`);
           resolve(res);
         });
@@ -101,7 +100,7 @@ function init(data, file) {
       fastaTotal = seqs.length;
       arraySeqs(seqs).then(arr => {
         parseData(arr).then(res => {
-          console.log(file, res.length, `All ${res[0].length} positions done`);
+          console.log(file, `All ${res[0].length} positions done`);
           resolve(res);
         });
       });
