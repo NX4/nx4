@@ -7,6 +7,17 @@ import Tool from '../Tool';
 import './style.scss';
 import logo from '../img/nx4_logo_2.svg';
 
+const body = document.body;
+const html = document.documentElement;
+
+const height = Math.max(
+  body.scrollHeight,
+  body.offsetHeight,
+  html.clientHeight,
+  html.scrollHeight,
+  html.offsetHeight
+);
+
 class Home extends Component {
   constructor(props) {
     super(props);
@@ -55,7 +66,7 @@ class Home extends Component {
     }
     if (initView) {
       return (
-        <div className="home">
+        <div className="home" style={{height: height - 62}}>
           <div className="homeBanner">
             <p>Hi folks! We're currently in beta so please excuse any bugs. To try NX4, simply upload an aligned .fasta file, and if you encounter any issues, please report on Git. Thanks!</p>
           </div>
