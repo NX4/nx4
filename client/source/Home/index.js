@@ -5,6 +5,7 @@ import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import Upload from './Upload';
 import Tool from '../Tool';
 import './style.scss';
+import logo from '../img/nx4_logo_2.svg';
 
 class Home extends Component {
   constructor(props) {
@@ -50,20 +51,41 @@ class Home extends Component {
   render() {
     const { loading, initView, data } = this.state;
     if (loading) {
-      return <div className="cotainer">Loading ...</div>;
+      return <div className="cotainer">Loading...</div>;
     }
     if (initView) {
       return (
-        <div className="cotainer">
-          <h3>Select data samples:</h3>
-          <ul className="samples">
-            <li data-sample="ebola" onClick={this.clickSample}>Ebola</li>
-            <li data-sample="muv" onClick={this.clickSample}>MUV</li>
-          </ul>
-          <p>Upload your own .fasta file:</p>
-          <div className="upload">
-            <Upload uploadFile={this.uploadFile} />
+        <div className="home">
+          <div className="homeBanner">
+            <p>Hi folks! We're currently in beta so please excuse any bugs. To try NX4, simply upload an aligned .fasta file, and if you encounter any issues, please report on Git. Thanks!</p>
           </div>
+          <div className="mainHomeContainer">
+            <div className="leftContainer">
+              <Link to="/"><img id="homeLogo" alt="logo image" src={logo} /></Link>
+              <h2>A Multiple Sequence Alignment visualizer for viral genomics</h2>
+              <h4>NX4 is a web-based visualization tool for the exploration of large datasets of
+                viral sequences. This tool was born as an alternative to matrix-based MSA visualizations.</h4>
+              <h4>This is an open-source project maintained by a small group of web-developers, visualization researchers and computational scientists. If you'd like to contribute, report bugs or learn more about the project, please visit the <a href="#">GitHub repository.</a></h4>
+              <h4> Additionally if you use this tool for your work, please cite it as follows: [publication pending]</h4>
+            </div>
+            <div className="columnDivider"></div>
+            <div className="upload">
+              <h4>To get started upload a file</h4>
+              
+              <div className="uploader">
+                <Upload uploadFile={this.uploadFile} />
+              </div>
+              <p>Or try one of our sample files:</p>
+              <ul className="samples">
+                <li data-sample="ebola" onClick={this.clickSample}>Ebola Zaire (EBOV) – 1800 samples</li>
+                <li data-sample="muv" onClick={this.clickSample}>Mumps Boston (MUV) – 135 samples</li>
+              </ul>
+            </div>
+          </div>
+
+          <footer className="homeFooter">
+          <p>An open-source project</p>
+          </footer>
         </div>
       );
     }

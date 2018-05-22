@@ -1,3 +1,91 @@
+// Home module styles
+
+$color-violet: #6c2167;
+
+.home {
+  background-color: #f2f2f2;
+  min-height: 100%;
+  margin-bottom: -50px;
+
+  .homeBanner {
+    text-align: center;
+    padding: 5px 20px;
+    margin: 0 auto;
+    background-color: $color-violet;
+    color: aliceblue;
+    margin-bottom: 20px;
+  }
+
+  #homeLogo {
+    width: 200px;
+  }
+
+  .mainHomeContainer {
+  display: flex;  
+  flex-flow: row wrap;
+  text-align: center;
+  margin: 0 30px;
+
+  > * {
+  padding: 20px;
+  flex: 1 100%;
+  }
+
+  .leftContainer {
+    text-align: left;
+    flex: 4 0px;
+    padding-right: 40px;
+
+    h2 {
+    color: $color-violet;
+    font-weight: 400;
+    }
+
+    h4 {
+      color: #222;
+      font-weight: 400;
+      text-transform: none;
+      line-height: 1.5;
+    }
+  }
+
+  .columnDivider {
+    flex: 1 0px;
+  }
+
+  .upload {
+    flex: 2 0px;
+    text-align: left;
+  }
+}
+
+.homeFooter {
+  height: 50px;
+}
+
+}
+
+// Dropzone styles
+
+.dropzoneContainer {
+  .dropzoneArea {
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+    border: 1px dashed $color-violet;
+  }
+
+  p {
+    color: rgb(55, 55, 55);
+    text-align: center;
+  }
+}
+
+
+
+
+// React Animate
+
 .example-enter {
   opacity: 0.01;
 }
