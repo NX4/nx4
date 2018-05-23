@@ -6,6 +6,17 @@ import Context from './modules/context';
 import Focus from './modules/focus';
 import Alignment from './modules/alignment';
 
+const body = document.body;
+const html = document.documentElement;
+
+const height = Math.max(
+  body.scrollHeight,
+  body.offsetHeight,
+  html.clientHeight,
+  html.scrollHeight,
+  html.offsetHeight
+);
+
 export default class Tool extends Component {
   constructor(props) {
     super(props);
@@ -37,7 +48,7 @@ export default class Tool extends Component {
 
   render() {
     return (
-      <div id="main-container">
+      <div id="main-container" style={{height: height - 162}}>
         <div className="context-main">
           <h4 className="subheadings">Sequence overview</h4>
           <div id="brush-container" />

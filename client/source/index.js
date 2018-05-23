@@ -7,6 +7,7 @@ import { getState, dispatch, observe } from './store';
 import Home from './Home';
 import Tool from './Tool';
 import Navbar from './Navbar';
+import Footer from './Footer';
 // import styles
 import './style.scss';
 
@@ -19,6 +20,7 @@ const AppRouter = () => (
         <Route path="/" exact component={Home} />
         <Route path="/tool/:sample" component={Tool} />
       </Switch>
+      <Footer />
     </div>
   </Router>
 );

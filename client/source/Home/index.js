@@ -62,11 +62,11 @@ class Home extends Component {
   render() {
     const { loading, initView, data } = this.state;
     if (loading) {
-      return <div className="cotainer">Loading...</div>;
+      return <div className="cotainer" style={{height: height - 162}}>Loading...</div>;
     }
     if (initView) {
       return (
-        <div className="home" style={{height: height - 62}}>
+        <div className="home" style={{height: height - 162}}>
           <div className="homeBanner">
             <p>Hi folks! We're currently in beta so please excuse any bugs. To try NX4, simply upload an aligned .fasta file, and if you encounter any issues, please report on Git. Thanks!</p>
           </div>
@@ -93,10 +93,6 @@ class Home extends Component {
               </ul>
             </div>
           </div>
-
-          <footer className="homeFooter">
-          <p>An open-source project</p>
-          </footer>
         </div>
       );
     }
