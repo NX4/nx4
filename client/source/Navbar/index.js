@@ -7,7 +7,7 @@ export default class Navbar extends Component {
     const sample = ""
     return (
       <ul className="navbar" role="navigation">
-        <li className="home">
+        <li className="navHome">
           <Link to="/"><img id="logo" alt="" src={logo} /></Link>
         </li>
         <li className="seqId">{sample != "" ? sample : ""}</li>

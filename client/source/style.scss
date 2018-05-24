@@ -17,6 +17,8 @@ h4 {
 }
 
 .navbar {
+  // position: relative;
+  z-index: 1;
   display: -webkit-flex;
   display: flex;
   -webkit-flex-wrap: nowrap;
@@ -28,15 +30,18 @@ h4 {
   padding: 0 10px;
   margin: 0;
   border: 1px solid rgba(238,238,238 ,1);
-  // border-radius: 5px;
   color: rgba(117,117,117 ,1);
   box-shadow: 5px 10px 20px -20px rgb(125, 125, 125);
+
+  -webkit-box-shadow: 0px 0px 8px 1px rgba(168,168,168,1);
+  -moz-box-shadow: 0px 0px 8px 1px rgba(168,168,168,1);
+  box-shadow: 0px 0px 8px 1px rgba(168,168,168,1);
 
   li {
     cursor: pointer;
   }
 
-  .home {
+  .navHome {
     // LOGO
     img {
       width: 80px;

@@ -1,7 +1,12 @@
 footer {
-  // position: fixed;
-  // bottom: 0;
-  height: 100px;
+  background-color: #666;
+  height: 50px;
   width: 100%;
-  background-color: red
+
+  div {
+    position: absolute;
+    margin: 5px 20px;
+    color: #f2f2f2;
+    font-size: 12px;
+  }
 }

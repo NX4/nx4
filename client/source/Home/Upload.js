@@ -25,14 +25,11 @@ export default class Upload extends Component {
     return (
       <section>
         <div className="dropzoneContainer">
-          {/* <svg width="100%" height="180">
-            <rect x="5" y="5" rx="10" ry="10" width="150" height="150" strokeDasharray="10, 5"
-              style={svgStyle} />
-          </svg> */}
           <Dropzone className="dropzoneArea" onDrop={this.onDrop.bind(this)}>
-            <p>
-              drop an aligned .fasta file here
-            </p>
+            <div>
+              <p className="fas fa-upload"></p>
+              <p>drop an aligned .fasta file or click here</p>
+            </div>
           </Dropzone>
         </div>
       </section>

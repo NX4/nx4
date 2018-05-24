@@ -54,12 +54,41 @@ $color-violet: #6c2167;
   .upload {
     flex: 2 0px;
     text-align: left;
+
+    .samplesContainer {
+      margin-top: 40px;
+      width: 100%;
+
+      p {
+        margin: 0px 0px 10px 0px;
+      }
+
+      ul {
+        width: 100%;
+      }
+
+      .samples > li {
+        padding: 12px;
+        border-radius: 3px;
+        border: 1px solid rgba(108,33,103, 0.5);
+        font-size: 14px;
+        color: #666;
+        margin-bottom: 14px;
+        -webkit-box-shadow: 0px 0px 4px 1px rgba(168,168,168,.6);
+        -moz-box-shadow: 0px 0px 4px 1px rgba(168,168,168,.6);
+        box-shadow: 0px 0px 4px 1px rgba(168,168,168,.6);
+
+        &:hover {
+          background-color: rgba(108,33,103, 0.2);
+        }
+      }
+    }
   }
 }
 
-.homeFooter {
-  height: 50px;
-}
+// .homeFooter {
+//   height: 50px;
+// }
 
 }
 
@@ -71,15 +100,26 @@ $color-violet: #6c2167;
     height: 100%;
     border-radius: 10px;
     border: 1px dashed $color-violet;
+
+    &:hover {
+      background-color: rgba(108,33,103, 0.2);
+    }
   }
 
-  p {
-    color: rgb(55, 55, 55);
+  div {
     text-align: center;
+    cursor: pointer;
+    margin-top: 10px;
+    font-size: 20px;
+    color: $color-violet;
+
+    p {
+      margin-top: 5px;
+      font-size: 14px;
+      color: rgb(55, 55, 55);
+    }
   }
 }
-
-
 
 
 // React Animate

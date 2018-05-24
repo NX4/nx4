@@ -8,6 +8,8 @@
     "build": "NODE_ENV=production ./node_modules/.bin/webpack --config webpack.prod.js"
   },
   "dependencies": {
+    "@fortawesome/fontawesome": "^1.1.8",
+    "@fortawesome/fontawesome-free-solid": "^5.0.13",
     "axios": "^0.17.0",
     "clean-webpack-plugin": "^0.1.17",
     "d3": "^4.12.0",

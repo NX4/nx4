@@ -48,7 +48,7 @@ export default class Tool extends Component {
 
   render() {
     return (
-      <div id="main-container" style={{height: height - 162}}>
+      <div id="main-container" style={{height: height - 110}}>
         <div className="context-main">
           <h4 className="subheadings">Sequence overview</h4>
           <div id="brush-container" />
