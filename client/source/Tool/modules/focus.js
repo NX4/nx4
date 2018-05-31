@@ -213,18 +213,16 @@ export default class Focus {
     // Disable brush stretching or generating a new brush
     d3.selectAll('.handle').style('pointer-events', 'none');
     d3
-      .select('.brush')
-      .select('.overlay')
-      .attr('pointer-events', 'none');
+      // .select('.brush')
+      // .select('.overlay')
+      // .attr('pointer-events', 'none');
 
     const context = d3.select('.focusMouseCtx').node();
-    console.log(context);
 
     setTimeout(() => {
       this.unsubscribeHover = observe(
         state => state.alignHover,
         (state, nextState) => {
-          console.log('position hovering on matrix inside focus', state);
           mouseMove(context, state);
         },
         500
