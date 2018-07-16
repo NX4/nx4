@@ -6,6 +6,7 @@ import Upload from './Upload';
 import Tool from '../Tool';
 import './style.scss';
 import logo from '../img/nx4_logo_2.svg';
+import Loader from '../ShareComponents/Loader';
 
 import fontawesome from '@fortawesome/fontawesome'
 import solid from '@fortawesome/fontawesome-free-solid'
@@ -67,11 +68,14 @@ class Home extends Component {
   render() {
     const { loading, initView, data } = this.state;
     if (loading) {
-      return <div className="cotainer" style={{height: height - 110}}>Loading...</div>;
+      return <div className="cotainer" style={{height: height - 110, textAlign: 'center', overflow: 'hidden'}}>
+        <Loader />
+        Loading visualization
+      </div>;
     }
     if (initView) {
       return (
-        <div className="home" style={{height: height - 110}}>
+        <div className="home" style={{height: height - 360}}>
           <div className="homeBanner">
             <p>Hello! We're currently in beta so please excuse any bugs. To try NX4, simply upload an aligned .fasta file, and if you encounter any issues, please <a href="https://github.com/jotasolano/calign">report on Git.</a> Thanks!</p>
           </div>
