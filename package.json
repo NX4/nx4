@@ -17,6 +17,7 @@
     "biojs-io-fasta": "^0.1.17",
     "express": "^4.16.2",
     "formidable": "^1.2.1",
+    "log-util": "^1.2.0",
     "memoizee": "0.4.11"
   },
   "devDependencies": {

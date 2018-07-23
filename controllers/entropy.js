@@ -1,5 +1,6 @@
 const fastaParser = require('biojs-io-fasta');
 const fs = require('fs');
+const log = require('log-util');
 
 // Define globals
 let fastaTotal;
@@ -78,7 +79,7 @@ function init(data, file) {
       fastaTotal = seqs.length;
       arraySeqs(seqs).then(arr => {
         parseData(arr).then(res => {
-          console.log(`All ${res[0].length} positions done`);
+          log.debug(`All ${res[0].length} positions done`);
           resolve(res);
         });
       });
@@ -94,13 +95,13 @@ function init(data, file) {
     }
     fs.readFile(filePath, 'utf8', (err, data) => {
       if (err) {
-        return console.log(err);
+        return log.error(err);
       }
       const seqs = fastaParser.parse(data);
       fastaTotal = seqs.length;
       arraySeqs(seqs).then(arr => {
         parseData(arr).then(res => {
-          console.log(file, `All ${res[0].length} positions done`);
+          log.debug(file, `All ${res[0].length} positions done`);
           resolve(res);
         });
       });
