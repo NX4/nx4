@@ -6,6 +6,8 @@ import Context from './modules/context';
 import Focus from './modules/focus';
 import Alignment from './modules/alignment';
 
+import './style.scss'
+
 const body = document.body;
 const html = document.documentElement;
 
@@ -48,7 +50,7 @@ export default class Tool extends Component {
 
   render() {
     return (
-      <div id="main-container" style={{height: height - 110}}>
+      <div id="main-container">
         <div className="context-main">
           <h4 className="subheadings">Sequence overview</h4>
           <div id="brush-container" />

@@ -75,7 +75,7 @@ class Home extends Component {
     }
     if (initView) {
       return (
-        <div className="home" style={{height: height - 360}}>
+        <div className="home" style={{height: height - 110}}>
           <div className="homeBanner">
             <p>Hello! We're currently in beta so please excuse any bugs. To try NX4, simply upload an aligned .fasta file, and if you encounter any issues, please <a href="https://github.com/jotasolano/calign">report on Git.</a> Thanks!</p>
           </div>

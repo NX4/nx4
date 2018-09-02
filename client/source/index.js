@@ -20,7 +20,7 @@ const AppRouter = () => (
         <Route path="/" exact component={Home} />
         <Route path="/tool/:sample" component={Tool} />
       </Switch>
-      {/* <Footer /> */}
+      <Footer />
     </div>
   </Router>
 );
