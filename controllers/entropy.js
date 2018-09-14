@@ -56,7 +56,7 @@ function parseData(array, fTotal) {
         const oKeys = Object.keys(pObj);
         for (let l = 0; l < oKeys.length; l++) {
           const key = Object.keys(pObj)[l];
-          const res = { pos: i, type: key, value: obj[key].count, seqs: obj[key].count === 100 ? [] : obj[key].seqs };
+          const res = { pos: i, type: key, value: obj[key].count, seqs: obj[key].count === 100 ? ['all'] : obj[key].seqs };
           if (obj[key].count !== 0) {
             vEntropy += obj[key].count / 100 * Math.log2(obj[key].count / 100);
           }

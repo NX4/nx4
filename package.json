@@ -5,8 +5,8 @@
   "author": "Carlos Cruz @carcruz & Antonio Solano @jotasolano",
   "license": "MIT",
   "engines": {
-    "node": "8.11.3",
-    "npm": "6.2.0"
+    "node": "6.9.5",
+    "npm": "3.10.10"
   },
   "scripts": {
     "dev": "nodemon server.js",

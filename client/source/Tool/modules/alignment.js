@@ -84,7 +84,10 @@ export default class Alignment {
       .attr('y', d => scaleY(d.type))
       .style('pointer-events', 'all')
       .on('click', d => {
-        if(d.seqs.length > 0) {
+        if(d.seqs[0] === 'all') {
+          this.clickOnRect(d.pos, d.type, getState().sequence.all)
+        }
+        else {
           const list = [];
           for (let i = 0; i < d.seqs.length; i++) {
             list.push(getState().sequence.all.filter(seq => seq.id == d.seqs[i])[0].name);
