@@ -18,7 +18,8 @@
     "express": "^4.16.2",
     "formidable": "^1.2.1",
     "log-util": "^1.2.0",
-    "memoizee": "0.4.11"
+    "memoizee": "0.4.11",
+    "throng": "^4.0.0"
   },
   "devDependencies": {
     "nodemon": "^1.14.1"
