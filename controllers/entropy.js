@@ -2,21 +2,28 @@ const fastaParser = require('biojs-io-fasta');
 const fs = require('fs');
 const log = require('log-util');
 
-// Define globals
-let fastaTotal;
+function arraySeqs(seqs) {
+  return new Promise(resolve => {
+    const arr = [];
+    for (let i = 0; i < seqs.length; i++) {
+      arr.push({ seq: seqs[i].seq, id: seqs[i].id });
+    }
+    resolve(arr, seqs.length);
+  });
+}
 
-function applyPercentage(obj, gaps, ambi) {
+function applyPercentage(obj, gaps, ambi, total) {
   return new Promise(resolve => {
     const keys = Object.keys(obj);
     for (let i = 0; i < keys.length; i++) {
-      const val = obj[keys[i]].count / (fastaTotal - (gaps + ambi));
+      const val = obj[keys[i]].count / (total - (gaps + ambi));
       obj[keys[i]].count = Math.round(val * 100);
     }
     resolve(obj);
   });
 }
 
-function parseData(array) {
+function parseData(array, fTotal) {
   return new Promise(resolve => {
     const positionData = [];
     const entropy = [];
@@ -44,7 +51,7 @@ function parseData(array) {
       if (gaps > 0) {
         gapsArr.push({ pos: i, gaps });
       }
-      applyPercentage(obj, gaps, ambiguity).then(pObj => {
+      applyPercentage(obj, gaps, ambiguity, fTotal).then(pObj => {
         let vEntropy = 0;
         const oKeys = Object.keys(pObj);
         for (let l = 0; l < oKeys.length; l++) {
@@ -66,10 +73,12 @@ function init(data, file) {
   if (data && data !== null) {
     return new Promise(resolve => {
       const seqs = fastaParser.parse(data);
-      fastaTotal = seqs.length;
-      parseData(seqs).then(res => {
-        log.debug(`All ${res[0].length} positions done`);
-        resolve(res);
+      const fastaTotal = seqs.length;
+      arraySeqs(seqs).then(arr => {
+        parseData(arr, fastaTotal).then(res => {
+          log.debug(`All ${res[0].length} positions done`);
+          resolve(res);
+        });
       });
     });
   }
