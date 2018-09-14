@@ -5,22 +5,12 @@ const log = require('log-util');
 // Define globals
 let fastaTotal;
 
-function arraySeqs(seqs) {
-  return new Promise(resolve => {
-    const arr = [];
-    for (let i = 0; i < seqs.length; i++) {
-      arr.push(seqs[i].seq);
-    }
-    resolve(arr);
-  });
-}
-
 function applyPercentage(obj, gaps, ambi) {
   return new Promise(resolve => {
     const keys = Object.keys(obj);
     for (let i = 0; i < keys.length; i++) {
-      const val = obj[keys[i]] / (fastaTotal - (gaps + ambi));
-      obj[keys[i]] = Math.round(val * 100);
+      const val = obj[keys[i]].count / (fastaTotal - (gaps + ambi));
+      obj[keys[i]].count = Math.round(val * 100);
     }
     resolve(obj);
   });
@@ -31,37 +21,37 @@ function parseData(array) {
     const positionData = [];
     const entropy = [];
     const gapsArr = [];
-    for (let i = 0; i < array[0].length; i++) {
+    for (let i = 0; i < array[0].seq.length; i++) {
       const obj = {
-        A: 0,
-        C: 0,
-        G: 0,
-        T: 0,
-        N: 0
+        A: {count: 0, seqs: []},
+        C: {count: 0, seqs: []},
+        G: {count: 0, seqs: []},
+        T: {count: 0, seqs: []},
+        N: {count: 0, seqs: []},
       };
       let gaps = 0;
       let ambiguity = 0;
       for (let t = 0; t < array.length; t++) {
-        if (array[t].charAt(i) == '-') {
+        if (array[t].seq.charAt(i) == '-') {
           gaps += 1;
-        } else if (Object.keys(obj).indexOf(array[t].charAt(i)) === -1) {
+        } else if (Object.keys(obj).indexOf(array[t].seq.charAt(i)) === -1) {
           ambiguity += 1;
         } else {
-          obj[array[t].charAt(i)] += 1;
+          obj[array[t].seq.charAt(i)].count += 1;
+          obj[array[t].seq.charAt(i)].seqs.push(array[t].id);
         }
       }
       if (gaps > 0) {
         gapsArr.push({ pos: i, gaps });
       }
       applyPercentage(obj, gaps, ambiguity).then(pObj => {
-        const cEntropy = [];
         let vEntropy = 0;
         const oKeys = Object.keys(pObj);
         for (let l = 0; l < oKeys.length; l++) {
           const key = Object.keys(pObj)[l];
-          const res = { pos: i, type: key, value: obj[key] };
-          if (obj[key] !== 0) {
-            vEntropy += obj[key] / 100 * Math.log2(obj[key] / 100);
+          const res = { pos: i, type: key, value: obj[key].count, seqs: obj[key].count === 100 ? [] : obj[key].seqs };
+          if (obj[key].count !== 0) {
+            vEntropy += obj[key].count / 100 * Math.log2(obj[key].count / 100);
           }
           positionData.push(res);
         }
@@ -77,11 +67,9 @@ function init(data, file) {
     return new Promise(resolve => {
       const seqs = fastaParser.parse(data);
       fastaTotal = seqs.length;
-      arraySeqs(seqs).then(arr => {
-        parseData(arr).then(res => {
-          log.debug(`All ${res[0].length} positions done`);
-          resolve(res);
-        });
+      parseData(seqs).then(res => {
+        log.debug(`All ${res[0].length} positions done`);
+        resolve(res);
       });
     });
   }
@@ -99,11 +87,9 @@ function init(data, file) {
       }
       const seqs = fastaParser.parse(data);
       fastaTotal = seqs.length;
-      arraySeqs(seqs).then(arr => {
-        parseData(arr).then(res => {
-          log.debug(file, `All ${res[0].length} positions done`);
-          resolve(res);
-        });
+      parseData(seqs).then(res => {
+        log.debug(file, `All ${res[0].length} positions done`);
+        resolve(res);
       });
     });
   });
