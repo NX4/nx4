@@ -131,7 +131,6 @@ export default class Context {
     });
 
     function brushOnClick(brushWidth) {
-      console.log(brushWidth)
       const brushOverlay = brushEl.select('.overlay').node();
       
       const dx = scaleX(brushWidth) - scaleX(0); // Use a fixed width when recentering.

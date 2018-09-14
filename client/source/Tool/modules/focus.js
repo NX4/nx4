@@ -212,17 +212,13 @@ export default class Focus {
 
     // Disable brush stretching or generating a new brush
     d3.selectAll('.handle').style('pointer-events', 'none');
-    d3
-      // .select('.brush')
-      // .select('.overlay')
-      // .attr('pointer-events', 'none');
 
     const context = d3.select('.focusMouseCtx').node();
 
     setTimeout(() => {
       this.unsubscribeHover = observe(
         state => state.alignHover,
-        (state, nextState) => {
+        (state) => {
           mouseMove(context, state);
         },
         500
@@ -231,7 +227,7 @@ export default class Focus {
 
     this.unsubscribe = observe(
       state => state.focus,
-      (state, nextSate) => {
+      (state) => {
         const lower = Math.round(state.range[0]);
         const upper = Math.round(state.range[1]);
 

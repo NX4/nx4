@@ -23,8 +23,9 @@ const bisectPosition = d3.bisector(d => d.pos).left;
 
 
 export default class Alignment {
-  constructor(node) {
+  constructor(node, clickAction) {
     this.selection = d3.select(node);
+    this.clickOnRect = clickAction;
     this.unsubscribe;
     this.unsubscribe = () => {};
     this.unsubscribeHover = () => {};
@@ -82,6 +83,15 @@ export default class Alignment {
       .attr('height', rectHeight)
       .attr('y', d => scaleY(d.type))
       .style('pointer-events', 'all')
+      .on('click', d => {
+        if(d.seqs.length > 0) {
+          const list = [];
+          for (let i = 0; i < d.seqs.length; i++) {
+            list.push(getState().sequence.all.filter(seq => seq.id == d.seqs[i])[0].name);
+          }
+          this.clickOnRect(d.pos, d.type, list)
+        }
+      })
       .on('mouseover', () => {
         tooltip.style('display', null);
         d3.select('.tooltipFocus').style('display', null);
@@ -182,12 +192,12 @@ export default class Alignment {
       .attr('transform', d => `translate(${-2}, ${scaleY(d) + (rectHeight / 2) + 4})`);
 
     setTimeout(() => {
-      this.unsubscribeHover = observe(state => state.detailHover, (state, nextState) => {
+      this.unsubscribeHover = observe(state => state.detailHover, (state) => {
         mouseMove(state, 'position');
       }, 300);
     });
 
-    this.unsubscribe = observe(state => state.focus, (state, nextSate) => {
+    this.unsubscribe = observe(state => state.focus, (state) => {
       const lower = Math.round(state.range[0]);
       const upper = Math.round(state.range[1]);
 

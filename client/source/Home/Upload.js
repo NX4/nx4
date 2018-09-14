@@ -1,13 +1,18 @@
 import React, { Component } from 'react';
 import Dropzone from 'react-dropzone';
-import axios from 'axios';
+import FastaParser from 'biojs-io-fasta';
+import action from '../actions';
+import { dispatch } from '../store';
 import './style.scss';
 
-var svgStyle = {
-  fill: 'none',
-  stroke: 'black',
-  strokeWeight: '1px'
+const customGetMeta = function(header) {
+  return {
+    id: "id",
+    name: "name",
+  };
 }
+
+const sequcence = FastaParser;
 
 export default class Upload extends Component {
   constructor() {
@@ -18,7 +23,19 @@ export default class Upload extends Component {
   onDrop(files) {
     const formData = new FormData();
     formData.append('fastaFile', files[0]);
-    this.props.uploadFile(formData)
+    const data = sequcence.read(files[0].preview);
+    data.then(model => {
+      const response = [];
+      for (let i = 0; i < model.length; i++) {
+        const obj = {
+          id: model[i].id,
+          name: `${Object.keys(model[i].ids)[0]}`
+        }
+        response.push(obj);
+      }
+      dispatch(action.setCurrentSequence(files[0].name, response))
+      this.props.uploadFile(formData);
+    })
   }
 
   render() {

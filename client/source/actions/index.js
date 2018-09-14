@@ -46,7 +46,18 @@ function alignmentDetail(position) {
   };
 }
 
+function setCurrentSequence(name, sequence) {
+  return {
+    type: 'SET_CURRENT_SEQUENCE',
+    payload: {
+      name,
+      sequence
+    }
+  }
+}
+
 export default {
+  setCurrentSequence,
   setRectCount,
   updateRecs,
   updateFocus,

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { select, selectAll } from 'd3';
-import { get as fetch } from 'axios';
+import ReactJson from 'react-json-view'
 // modules of the viz
 import Context from './modules/context';
 import Focus from './modules/focus';
@@ -25,12 +25,22 @@ export default class Tool extends Component {
     this.contextChart;
     this.focusChart;
     this.alignmentChart;
+    this.clickOnRect = this.clickOnRect.bind(this);
+    this.state = { secOnSelection: [], typeSelection: null, posSelection: null };
+  }
+
+  clickOnRect(position, type, seqs) {
+    this.setState({
+      posSelection: position,
+      typeSelection: type,
+      secOnSelection: seqs
+    });
   }
 
   generateViz(gData, entropyData) {
     this.contextChart = new Context('#brush-container');
     this.focusChart = new Focus('#overview-container');
-    this.alignmentChart = new Alignment('#alignment-container');
+    this.alignmentChart = new Alignment('#alignment-container', this.clickOnRect);
 
     this.contextChart.render(entropyData);
     this.focusChart.render(entropyData);
@@ -45,7 +55,7 @@ export default class Tool extends Component {
   }
 
   componentDidMount() {
-      this.generateViz(this.props.data[0], this.props.data[1]);
+    this.generateViz(this.props.data[0], this.props.data[1]);
   }
 
   render() {
@@ -61,6 +71,15 @@ export default class Tool extends Component {
         </div>
         <div className="alignment-main">
           <div id="alignment-container" />
+        </div>
+        <div className="alignment-selection">
+          <ReactJson
+            src={this.state.secOnSelection}
+            collapsed={false}
+            displayDataTypes={false}
+            iconStyle="square"
+            name={this.state.typeSelection ? `${this.state.typeSelection}_${this.state.posSelection}` : 'selected'}
+          />
         </div>
       </div>
     );

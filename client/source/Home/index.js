@@ -111,6 +111,7 @@ class Home extends Component {
     return (
       <ReactCSSTransitionGroup
         transitionName="example"
+        component="div"
         transitionAppear={true}
         transitionAppearTimeout={500}
         transitionEnter={false}
