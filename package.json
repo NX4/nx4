@@ -1,12 +1,12 @@
 {
-  "name": "cAlign",
-  "version": "1.0.0",
+  "name": "nx4",
+  "version": "0.0.9",
   "main": "server/index.js",
   "author": "Carlos Cruz @carcruz & Antonio Solano @jotasolano",
   "license": "MIT",
   "engines": {
-    "node": "6.9.5",
-    "npm": "3.10.10"
+    "node": "8.11.3",
+    "npm": "6.2.0"
   },
   "scripts": {
     "dev": "nodemon server.js",
