@@ -1,6 +1,6 @@
 const fastaParser = require('biojs-io-fasta');
-const fs = require('fs');
-const log = require('log-util');
+// const fs = require('fs');
+// const log = require('log-util');
 
 function arraySeqs(seqs) {
   return new Promise(resolve => {
@@ -54,7 +54,7 @@ function parseData(array, fTotal) {
           ambiguity += 1;
         } else {
           obj[array[t].seq.charAt(i)].count += 1;
-          // obj[array[t].seq.charAt(i)].seqs.push(array[t].id);
+          obj[array[t].seq.charAt(i)].seqs.push(array[t].id);
         }
       }
       if (gaps > 0) {
@@ -78,39 +78,39 @@ function parseData(array, fTotal) {
   });
 }
 
-function init(data, file) {
-  if (data && data !== null) {
-    return new Promise(resolve => {
-      const seqs = fastaParser.parse(data);
-      const fastaTotal = seqs.length;
-      arraySeqs(seqs).then(arr => {
-        parseData(arr, fastaTotal).then(res => {
-          log.debug(`All ${res[0].length} positions done`);
-          resolve(res);
-        });
-      });
-    });
-  }
+function init(seqs, file) {
   return new Promise(resolve => {
-    let filePath;
-    if (file == 'ebola') {
-      filePath = `${__dirname}/data/171020-KGA_RAxML_bipartitions.ebov_alignment_red.fasta`;
-    }
-    if (file == 'muv') {
-      filePath = `${__dirname}/data/MuV-MDPH.aligned.pruned.fasta`;
-    }
-    fs.readFile(filePath, 'utf8', (err, data) => {
-      if (err) {
-        return log.error(err);
-      }
-      const seqs = fastaParser.parse(data);
-      fastaTotal = seqs.length;
-      parseData(seqs).then(res => {
-        log.debug(file, `All ${res[0].length} positions done`);
+    const fastaTotal = seqs.length;
+    // printMemory()
+    arraySeqs(seqs).then(arr => {
+      // printMemory()
+      parseData(arr, fastaTotal).then(res => {
+        // log.debug(`All ${res[0].length} positions done`);
+        // printMemory()
         resolve(res);
       });
     });
   });
+  // return new Promise(resolve => {
+  //   let filePath;
+  //   if (file == 'ebola') {
+  //     filePath = `${__dirname}/data/171020-KGA_RAxML_bipartitions.ebov_alignment_red.fasta`;
+  //   }
+  //   if (file == 'muv') {
+  //     filePath = `${__dirname}/data/MuV-MDPH.aligned.pruned.fasta`;
+  //   }
+  //   fs.readFile(filePath, 'utf8', (err, data) => {
+  //     if (err) {
+  //       return log.error(err);
+  //     }
+  //     const seqs = fastaParser.parse(data);
+  //     fastaTotal = seqs.length;
+  //     parseData(seqs).then(res => {
+  //       log.debug(file, `All ${res[0].length} positions done`);
+  //       resolve(res);
+  //     });
+  //   });
+  // });
 }
 
-module.exports = init;
+export default init;

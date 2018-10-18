@@ -35,6 +35,8 @@ class Home extends Component {
     this.uploadFile = this.uploadFile.bind(this);
     this.clickBack = this.clickBack.bind(this);
     this.clickSample = this.clickSample.bind(this);
+    this.setLoading = this.setLoading.bind(this);
+    this.setData = this.setData.bind(this);
   }
 
   uploadFile(formData) {
@@ -47,6 +49,14 @@ class Home extends Component {
     }).then(response => {
       _this.setState({ loading: false, initView: false, data: response.data });
     });
+  }
+
+  setLoading() {
+    this.setState({ loading: true });
+  }
+
+  setData(data) {
+    this.setState({ loading: false, initView: false, data });
   }
 
   clickSample(e) {
@@ -90,10 +100,10 @@ class Home extends Component {
               <h4>To get started upload a file</h4>
               
               <div className="uploader">
-                <Upload uploadFile={this.uploadFile} />
+                <Upload uploadFile={this.uploadFile} setLoading={this.setLoading} setData={this.setData} />
               </div>
               
-              <div className="samplesContainer">              
+              <div className="samplesContainer">
                 <p>Or try one of our sample files:</p>
                 <ul className="samples">
                   <li data-sample="ebola" onClick={this.clickSample}>Ebola Zaire (EBOV) – 1800 samples</li>

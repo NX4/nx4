@@ -6,5 +6,5 @@ const getDataCache = memoize(entropy, { primitive: true }, { promise: true });
 
 module.exports = {
   fasta,
-  entropy: getDataCache
+  entropy
 }
