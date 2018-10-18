@@ -59,7 +59,10 @@ const config = {
   target: 'web',
   plugins: [
     new CleanWebpackPlugin(['built']),
-    new HtmlWebpackPlugin({ template: 'source/index.html' }),
+    new HtmlWebpackPlugin({
+      template: 'source/index.html',
+      favicon: 'source/assets/favicon.ico' 
+    }),
     new webpack.optimize.OccurrenceOrderPlugin(true),
     new ExtractTextPlugin({
       filename: 'main.css',

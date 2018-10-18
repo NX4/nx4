@@ -2,6 +2,12 @@
 
 $color-violet: #6c2167;
 
+a {
+  text-decoration: none;
+  color: $color-violet;
+  font-weight: 600; 
+}
+
 .home {
   background-color: #f2f2f2;
 

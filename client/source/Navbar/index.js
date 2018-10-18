@@ -11,8 +11,8 @@ export default class Navbar extends Component {
           <Link to="/"><img id="logo" alt="" src={logo} /></Link>
         </li>
         <li className="seqId">{sample != "" ? sample : ""}</li>
-        <li className="about">ABOUT</li>
-        <li className="docs">DOCS</li>
+        <li className="about"> <a href="https://github.com/NX4/nx4">GitHub</a></li>
+        <li className="about"> <a href="https://nx4.gitbook.io/documentation/">Guide</a></li>
       </ul>
     );
   }

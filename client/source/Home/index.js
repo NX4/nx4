@@ -76,16 +76,13 @@ class Home extends Component {
     if (initView) {
       return (
         <div className="home" style={{height: height - 110}}>
-          <div className="homeBanner">
-            <p>Hello! We're currently in beta so please excuse any bugs. To try NX4, simply upload an aligned .fasta file, and if you encounter any issues, please <a href="https://github.com/jotasolano/calign">report on Git.</a> Thanks!</p>
-          </div>
           <div className="mainHomeContainer">
             <div className="leftContainer">
               <Link to="/"><img id="homeLogo" alt="logo image" src={logo} /></Link>
               <h2>A Multiple Sequence Alignment visualizer for viral genomics</h2>
-              <h4>NX4 is a web-based visualization tool for the exploration of large datasets of
-                viral sequences. This tool was born as an alternative to matrix-based MSA visualizations.</h4>
-              <h4>This is an open-source project maintained by a small group of web-developers, visualization researchers and computational scientists. If you'd like to contribute, report bugs or learn more about the project, please visit the <a href="https://github.com/jotasolano/calign">GitHub repository.</a></h4>
+              <h4>NX4 is a web-based visualization tool for the exploration of aligned viral sequences. The tool was born as an alternative to matrix-based MSA visualizations.</h4>
+              <h4>This is an open-source project maintained by a small group of web-developers, visualization researchers and computational scientists. If you'd like to contribute, report bugs or learn more about the project, please <a href="https://github.com/NX4/nx4">visit the GitHub repository.</a></h4>
+              <h4>Please <a href="https://nx4.gitbook.io/documentation/">refer to the documentation to learn more about how to use this tool.</a> </h4>
               <h4> Additionally if you use this tool for your work, please cite it as follows: [publication pending]</h4>
             </div>
             <div className="columnDivider"></div>

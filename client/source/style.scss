@@ -52,13 +52,12 @@ h4 {
   :not(:first-child) {
       margin: 0;
       padding: 0 5px;
-      border-left: 1px solid;
-      border-left-color: #222;
+      margin: 0px 10px;
       text-align: right;
     }
 
   .about {
-    width: 50px;
+    width: auto;
   }
 
   .home {
