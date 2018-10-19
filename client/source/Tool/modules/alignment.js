@@ -73,6 +73,8 @@ export default class Alignment {
         .append('g')
         .attr('transform', `translate(${margin.l}, ${margin.t})`);
 
+
+    // Heat map
     const basepairs = svgEnter.selectAll('rect')
       .data(alignData.slice(0, totalRects * 5));
 
@@ -129,26 +131,63 @@ export default class Alignment {
       .attr('class', 'axis axis--y')
       .call(yAxisAlignment);
 
-    const keyContainer = svgEnter.append('g')
-      .attr('class', 'key-container');
 
-    // Color scale key
-    const defs = svgEnter.append('defs');
+    // Color legend
+    const legendNode = svgEnter.append('g')
+      .attr('id', 'legend')
+      .attr('class', 'legend')
+      .attr('transform', `translate(${0}, ${-margin.t})`);
+
+    const legendScale = d3.scaleOrdinal()
+      .domain(["0%", "1%", "50%", "99%", "100%"])
+      .range([0, 20, 200, 400, 420]);
+
+    const legendAxis = d3.axisBottom()
+      .scale(legendScale);
+
+    const defs = legendNode.append('defs');
+
     const linearGradient = defs.append('linearGradient')
-      .attr('id', 'linear-gradient');
-
-    // Horizontal gradient
-    linearGradient
+      .attr('id', 'linear-gradient')
       .attr('x1', '0%')
       .attr('y1', '0%')
       .attr('x2', '100%')
       .attr('y2', '0%');
 
-    linearGradient.selectAll('stop')
-      .data(color.range())
-      .enter().append('stop')
-      .attr('offset', (d, i) => i / (color.range().length - 1))
-      .attr('stop-color', d => d);
+    linearGradient.append("stop")
+      .attr("offset", "0%")
+      .attr("stop-color", '#f3cbd3');
+
+    linearGradient.append("stop")
+      .attr("offset", "50%")
+      .attr("stop-color", "#6c2167");
+
+    linearGradient.append("stop")
+      .attr("offset", "100%")
+      .attr("stop-color", "#f3cbd3");
+
+    legendNode.append('rect')
+      .attr('width', 20)
+      .attr('height', 10)
+      .style('fill', '#f2f2f2');
+
+    legendNode.append('rect')
+      .attr('width', 400)
+      .attr('height', 10)
+      .style("fill", "url(#linear-gradient)")
+      .attr('transform', 'translate(20, 0)')
+
+    legendNode.append('rect')
+      .attr('width', 20)
+      .attr('height', 10)
+      .style('fill', '#C0C0C0')
+      .attr('transform', 'translate(420, 0)');
+
+    legendNode.append('g')
+      .attr('class', 'legendAxis')
+      .attr('transform', `translate(${20}, ${0})`)
+      .call(legendAxis);
+
 
     d3.select('#alignment-container').selectAll('line').style('display', 'none');
 
