@@ -128,7 +128,7 @@ export default class Alignment {
     }
 
     svgEnter.append('g')
-      .attr('class', 'axis axis--y')
+      .attr('class', 'axis axis--y axis--y-alignment')
       .call(yAxisAlignment);
 
 
@@ -136,14 +136,16 @@ export default class Alignment {
     const legendNode = svgEnter.append('g')
       .attr('id', 'legend')
       .attr('class', 'legend')
-      .attr('transform', `translate(${0}, ${-margin.t})`);
+      .attr('transform', `translate(${W - 440 - margin.r}, ${margin.t + rectHeight*5})`);
 
     const legendScale = d3.scaleOrdinal()
-      .domain(["0%", "1%", "50%", "99%", "100%"])
-      .range([0, 20, 200, 400, 420]);
+      .domain(["1%", "50%", "99%", "100%"])
+      .range([20, 220, 420, 440]);
 
     const legendAxis = d3.axisBottom()
-      .scale(legendScale);
+      .scale(legendScale)
+      .tickSize(13)
+      .ticks(5);
 
     const defs = legendNode.append('defs');
 
@@ -185,11 +187,23 @@ export default class Alignment {
 
     legendNode.append('g')
       .attr('class', 'legendAxis')
-      .attr('transform', `translate(${20}, ${0})`)
-      .call(legendAxis);
+      .attr('transform', `translate(${0}, ${0})`)
+      .call(legendAxis)
+      .call(g => g.select('.domain').remove())
+      .selectAll("text")
+        .attr("x", 30)
+        .attr("y", 10)
+        .style("text-anchor", "start");
 
+    legendNode.append('text')
+      .text('Color Frequency Legend:')
+      .attr('x', 20)
+      .attr('y', -5)
+      .style('text-anchor', 'end')
+      .style('font-size', '14px')
+      .style('font-weight', 600);
 
-    d3.select('#alignment-container').selectAll('line').style('display', 'none');
+    d3.select('.axis--y-alignment').selectAll('line').style('display', 'none');
 
     // Modifying the position of the Y scale (nucleotides)
     d3.select('#alignment-container').selectAll('text')
