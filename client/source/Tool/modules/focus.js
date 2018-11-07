@@ -94,7 +94,7 @@ export default class Focus {
 
       const posText = tooltip
         .select('text.t-position') // eslint-disable-line
-        .text(`Position: ${d.i}`);
+        .text(`Position: ${d.i + 1}`);
 
       if (mouseX > W / 2) {
         entropyText

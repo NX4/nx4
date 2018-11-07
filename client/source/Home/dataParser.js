@@ -1,7 +1,3 @@
-const fastaParser = require('biojs-io-fasta');
-// const fs = require('fs');
-// const log = require('log-util');
-
 function arraySeqs(seqs) {
   return new Promise(resolve => {
     const arr = [];
@@ -81,36 +77,12 @@ function parseData(array, fTotal) {
 function init(seqs, file) {
   return new Promise(resolve => {
     const fastaTotal = seqs.length;
-    // printMemory()
     arraySeqs(seqs).then(arr => {
-      // printMemory()
       parseData(arr, fastaTotal).then(res => {
-        // log.debug(`All ${res[0].length} positions done`);
-        // printMemory()
         resolve(res);
       });
     });
   });
-  // return new Promise(resolve => {
-  //   let filePath;
-  //   if (file == 'ebola') {
-  //     filePath = `${__dirname}/data/171020-KGA_RAxML_bipartitions.ebov_alignment_red.fasta`;
-  //   }
-  //   if (file == 'muv') {
-  //     filePath = `${__dirname}/data/MuV-MDPH.aligned.pruned.fasta`;
-  //   }
-  //   fs.readFile(filePath, 'utf8', (err, data) => {
-  //     if (err) {
-  //       return log.error(err);
-  //     }
-  //     const seqs = fastaParser.parse(data);
-  //     fastaTotal = seqs.length;
-  //     parseData(seqs).then(res => {
-  //       log.debug(file, `All ${res[0].length} positions done`);
-  //       resolve(res);
-  //     });
-  //   });
-  // });
 }
 
 export default init;

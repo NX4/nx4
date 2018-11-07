@@ -31,7 +31,7 @@ export default class Tool extends Component {
 
   clickOnRect(position, type, seqs) {
     this.setState({
-      posSelection: position,
+      posSelection: position + 1,
       typeSelection: type,
       secOnSelection: seqs
     });

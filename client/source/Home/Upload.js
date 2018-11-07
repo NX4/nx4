@@ -28,6 +28,11 @@ export default class Upload extends Component {
     const data = sequcence.read(files[0].preview);
     data.then(model => {
       const response = [];
+      console.log(model)
+      // Acá es el problema, por cada secuencia yo extraigo el name
+      // en las secuencia de MuV el name es una fecha, por lo que yo busco en el parse de Ids
+      // En la de Ebola y el nuevo si existe un valor name.
+      // Creo que lo mejor es usar el name, aunque en MuV sea una fecha
       for (let i = 0; i < model.length; i++) {
         response.push({
           id: model[i].id,
@@ -35,7 +40,6 @@ export default class Upload extends Component {
         });
       }
       dispatch(action.setCurrentSequence(files[0].name, response));
-      // this.props.uploadFile(formData);
       dataParser(model).then(parsedData => (
         this.props.setData(parsedData)
       ));
