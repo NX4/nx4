@@ -143,15 +143,15 @@ class Home extends Component {
               <h4>
                 Please{' '}
                 <a href="https://nx4.gitbook.io/documentation/">
-                  refer to the documentation to learn more about how to use this
+                  refer to the user guide to learn more about how to use this
                   tool.
                 </a>{' '}
               </h4>
-              <h4>
+              {/* <h4>
                 {' '}
                 Additionally if you use this tool for your work, please cite it
                 as follows: [publication pending]
-              </h4>
+              </h4> */}
             </div>
             <div className="columnDivider" />
             <div className="upload">
@@ -166,14 +166,22 @@ class Home extends Component {
               </div>
 
               <div className="samplesContainer">
-                <p>Or try one of our sample files:</p>
+                <p>Or try one of our sample files below.<br></br>
+                  <a href="https://nx4.gitbook.io/documentation/" target= "_blank">Visit the user guide</a> for data sources and files.
+                  </p>
                 <ul className="samples">
+                  <li data-sample="ebola-gire" onClick={this.clickSample}>
+                    <span>101 Sequences – Ebola (EBOV)</span><br></br>
+                    Gire et al., Genomic surveillance elucidates Ebola virus origin and transmission during the 2014 outbreak, Science, 2014.
+                  </li>
                   <li data-sample="ebola" onClick={this.clickSample}>
-                    Ebola Zaire (EBOV) – 1800 samples
+                    <span>1,824 Sequences – Ebola (EBOV)</span><br></br>
+                    Compiled from a collection of sources referenced in Park et al., Ebola Virus Epidemiology, Transmission, and Evolution during Seven Months in Sierra Leone, Cell, 2015. 
                   </li>
-                  <li data-sample="muv" onClick={this.clickSample}>
-                    Mumps Boston (MUV) – 135 samples
-                  </li>
+                  {/* <li data-sample="muv" onClick={this.clickSample}>
+                    <span>135 Sequences – Mumps (MuV)</span><br></br>
+                    Kindly provided by the Broad Institute of MIT 
+                  </li> */}
                 </ul>
               </div>
             </div>

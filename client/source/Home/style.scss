@@ -87,6 +87,11 @@ a {
         &:hover {
           background-color: rgba(108,33,103, 0.2);
         }
+
+        span {
+          font-weight: bold;
+          color: #222;
+        }
       }
     }
   }

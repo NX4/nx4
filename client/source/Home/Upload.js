@@ -28,7 +28,7 @@ export default class Upload extends Component {
     const data = sequcence.read(files[0].preview);
     data.then(model => {
       const response = [];
-      console.log(model)
+      console.log('model', model)
       // Acá es el problema, por cada secuencia yo extraigo el name
       // en las secuencia de MuV el name es una fecha, por lo que yo busco en el parse de Ids
       // En la de Ebola y el nuevo si existe un valor name.
