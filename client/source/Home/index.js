@@ -18,10 +18,10 @@ import fontawesome from '@fortawesome/fontawesome';
 import solid from '@fortawesome/fontawesome-free-solid';
 
 const samplesURL = {
+  ebolaGire:
+    'https://s3.us-east-2.amazonaws.com/static-nx4/fasta-files/ebov.mafft.fasta',
   ebola:
-    'https://s3.us-east-2.amazonaws.com/static-nx4/fasta-files/171020-KGA_RAxML_bipartitions.ebov_alignment_red.fasta',
-  muv:
-    'https://s3.us-east-2.amazonaws.com/static-nx4/fasta-files/MuV-MDPH.aligned.pruned.fasta'
+    'https://s3.us-east-2.amazonaws.com/static-nx4/fasta-files/171020-KGA_RAxML_bipartitions.ebov_alignment_red.fasta'
 };
 
 fontawesome.library.add(solid);
@@ -170,7 +170,7 @@ class Home extends Component {
                   <a href="https://nx4.gitbook.io/documentation/" target= "_blank">Visit the user guide</a> for data sources and files.
                   </p>
                 <ul className="samples">
-                  <li data-sample="ebola-gire" onClick={this.clickSample}>
+                  <li data-sample="ebolaGire" onClick={this.clickSample}>
                     <span>101 Sequences – Ebola (EBOV)</span><br></br>
                     Gire et al., Genomic surveillance elucidates Ebola virus origin and transmission during the 2014 outbreak, Science, 2014.
                   </li>
@@ -178,10 +178,6 @@ class Home extends Component {
                     <span>1,824 Sequences – Ebola (EBOV)</span><br></br>
                     Compiled from a collection of sources referenced in Park et al., Ebola Virus Epidemiology, Transmission, and Evolution during Seven Months in Sierra Leone, Cell, 2015. 
                   </li>
-                  {/* <li data-sample="muv" onClick={this.clickSample}>
-                    <span>135 Sequences – Mumps (MuV)</span><br></br>
-                    Kindly provided by the Broad Institute of MIT 
-                  </li> */}
                 </ul>
               </div>
             </div>
