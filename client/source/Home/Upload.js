@@ -6,12 +6,21 @@ import { dispatch } from '../store';
 import dataParser from './dataParser';
 import './style.scss';
 
-const customGetMeta = function(header) {
-  return {
-    id: 'id',
-    name: 'name'
-  };
-};
+function defineName(sequence) {
+  const name = sequence.name;
+  const db = Object.keys(sequence.ids)[0];
+  const uid = sequence.ids[`${db}`];
+  if (db === undefined && uid !== undefined) {
+    return `${uid}|${name}`;
+  } 
+  else if (db !== undefined && uid === undefined) {
+    return `${db}|${name}`;
+  }
+  else if (uid === undefined && uid === undefined) {
+    return name;
+  } 
+  else return `${db}|${uid}|${name}`;
+}
 
 const sequcence = FastaParser;
 
@@ -28,15 +37,10 @@ export default class Upload extends Component {
     const data = sequcence.read(files[0].preview);
     data.then(model => {
       const response = [];
-      console.log('model', model)
-      // Acá es el problema, por cada secuencia yo extraigo el name
-      // en las secuencia de MuV el name es una fecha, por lo que yo busco en el parse de Ids
-      // En la de Ebola y el nuevo si existe un valor name.
-      // Creo que lo mejor es usar el name, aunque en MuV sea una fecha
       for (let i = 0; i < model.length; i++) {
         response.push({
           id: model[i].id,
-          name: `${Object.keys(model[i].ids)[0]}`
+          name: defineName(model[i])
         });
       }
       dispatch(action.setCurrentSequence(files[0].name, response));
