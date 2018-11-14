@@ -29,6 +29,22 @@ fontawesome.library.add(solid);
 const body = document.body;
 const html = document.documentElement;
 
+function defineName(sequence) {
+  const name = sequence.name;
+  const db = Object.keys(sequence.ids)[0];
+  const uid = sequence.ids[`${db}`];
+  if (db === undefined && uid !== undefined) {
+    return `${uid}|${name}`;
+  } 
+  else if (db !== undefined && uid === undefined) {
+    return `${db}|${name}`;
+  }
+  else if (uid === undefined && uid === undefined) {
+    return name;
+  } 
+  else return `${db}|${uid}|${name}`;
+}
+
 const height = Math.max(
   body.scrollHeight,
   body.offsetHeight,
@@ -81,7 +97,7 @@ class Home extends Component {
       for (let i = 0; i < data.length; i++) {
         response.push({
           id: data[i].id,
-          name: `${Object.keys(data[i].ids)[0]}`
+          name: defineName(data[i])
         });
       }
       dispatch(action.setCurrentSequence(sample, response));
