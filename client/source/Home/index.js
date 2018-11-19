@@ -88,8 +88,7 @@ class Home extends Component {
     this.setState({ loading: false, initView: false, data });
   }
 
-  clickSample(e) {
-    const { sample } = e.target.dataset;
+  clickSample(sample) {
     this.setState({ loading: true });
     get(samplesURL[sample]).then(fasta => {
       const data = sequcence.parse(fasta.data);
@@ -186,11 +185,11 @@ class Home extends Component {
                   <a href="https://nx4.gitbook.io/documentation/" target= "_blank">Visit the user guide</a> for data sources and files.
                   </p>
                 <ul className="samples">
-                  <li data-sample="ebolaGire" onClick={this.clickSample}>
+                  <li onClick={() => {this.clickSample('ebolaGire')}}>
                     <span>101 Sequences – Ebola (EBOV)</span><br></br>
                     Gire et al., Genomic surveillance elucidates Ebola virus origin and transmission during the 2014 outbreak, Science, 2014.
                   </li>
-                  <li data-sample="ebola" onClick={this.clickSample}>
+                  <li onClick={() => {this.clickSample('ebola')}}>
                     <span>1,824 Sequences – Ebola (EBOV)</span><br></br>
                     Compiled from a collection of sources referenced in Park et al., Ebola Virus Epidemiology, Transmission, and Evolution during Seven Months in Sierra Leone, Cell, 2015. 
                   </li>

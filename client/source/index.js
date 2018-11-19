@@ -18,7 +18,6 @@ const AppRouter = () => (
       <Navbar />
       <Switch>
         <Route path="/" exact component={Home} />
-        <Route path="/tool/:sample" component={Tool} />
       </Switch>
       <Footer />
     </div>
