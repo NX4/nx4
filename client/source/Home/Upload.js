@@ -4,7 +4,10 @@ import FastaParser from 'biojs-io-fasta';
 import action from '../actions';
 import { dispatch } from '../store';
 import dataParser from './dataParser';
+import accepted from 'attr-accept';
 import './style.scss';
+
+const acceptFiles = accepted({})
 
 function defineName(sequence) {
   const name = sequence.name;
@@ -28,6 +31,7 @@ export default class Upload extends Component {
   constructor() {
     super();
     this.state = { files: [] };
+    this.onDrop = this.onDrop.bind(this);
   }
 
   onDrop(files) {
@@ -54,7 +58,7 @@ export default class Upload extends Component {
     return (
       <section>
         <div className="dropzoneContainer">
-          <Dropzone className="dropzoneArea" onDrop={this.onDrop.bind(this)}>
+          <Dropzone className="dropzoneArea" accept=".fasta, .fastaq" onDropAccepted={this.onDrop}>
             <div>
               <p className="fas fa-upload" />
               <p>drop an aligned .fasta file or click here</p>
