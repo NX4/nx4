@@ -58,7 +58,14 @@ export default class Upload extends Component {
     return (
       <section>
         <div className="dropzoneContainer">
-          <Dropzone className="dropzoneArea" accept=".fasta, .fastaq" onDropAccepted={this.onDrop}>
+          <Dropzone className="dropzoneArea" accept=".fasta, .fastaq"
+            onDropAccepted={this.onDrop}
+            onDropRejected={
+              //here we need to fire an event that either renders or shows an error message
+              //there is an #errorMessage text element in index.js with visibility: none
+              // console.log("rejected");
+              dispatch(action.showErrorMessage("errorMessage", "inherit"))
+              }>
             <div>
               <p className="fas fa-upload" />
               <p>drop an aligned .fasta file or click here</p>

@@ -56,6 +56,16 @@ function setCurrentSequence(name, sequence) {
   }
 }
 
+function showErrorMessage(id, property) {
+  return {
+    type: 'SHOW_ERROR_MESSAGE',
+    payload: {
+      id,
+      property
+    }
+  }
+}
+
 export default {
   setCurrentSequence,
   setRectCount,
@@ -63,4 +73,5 @@ export default {
   updateFocus,
   coordinateDetail,
   alignmentDetail,
+  showErrorMessage,
 };

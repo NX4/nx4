@@ -181,6 +181,7 @@ class Home extends Component {
               </div>
 
               <div className="samplesContainer">
+                <h5 id="errorMessage">Error: It seems we don't support this file format. NX4 reads .fasta files. Please see the user guide for supported formats</h5>
                 <p>Or try one of our sample files below.<br></br>
                   <a href="https://nx4.gitbook.io/documentation/" target= "_blank">Visit the user guide</a> for data sources and files.
                   </p>

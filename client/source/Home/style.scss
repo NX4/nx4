@@ -162,6 +162,14 @@ a {
   transition: opacity 0.5s ease-in;
 }
 
+#errorMessage{
+  color: white;
+  background-color: #DB3737;
+  padding: 5px 10px;
+  border-radius: 3px;
+  display: none;
+}
+
 .samples {
   display: inline-block;
   margin: 0;
