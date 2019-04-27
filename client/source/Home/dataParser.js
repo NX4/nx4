@@ -14,16 +14,13 @@ function applyPercentage(obj, gaps, ambi, total) {
     const keys = Object.keys(obj);
     const keysLength = keys.length;
     for (let i = 0; i < keysLength; i++) {
-      const val = obj[keys[i]].count / (total - (gaps + ambi));
-      obj[keys[i]].count = Math.round(val * 100);
+      if (obj[keys[i]].count !== 0) {
+        const val = obj[keys[i]].count / (total - (gaps + ambi));
+        obj[keys[i]].count = Math.round(val * 100);
+      }
     }
     resolve(obj);
   });
-}
-
-function printMemory(){
-  const used = process.memoryUsage().heapUsed / 1024 / 1024;
-  console.log(`The script uses approximately ${Math.round(used * 100) / 100} MB`);
 }
 
 function parseData(array, fTotal) {
