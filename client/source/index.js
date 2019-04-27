@@ -10,6 +10,7 @@ import Navbar from './Navbar';
 import Footer from './Footer';
 // import styles
 import './style.scss';
+import 'react-sliding-pane/dist/react-sliding-pane.css';
 
 // define application Routes
 const AppRouter = () => (
