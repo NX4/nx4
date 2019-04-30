@@ -21,7 +21,9 @@ const samplesURL = {
   ebolaGire:
     'https://s3.us-east-2.amazonaws.com/static-nx4/fasta-files/ebov.mafft.fasta',
   ebola:
-    'https://s3.us-east-2.amazonaws.com/static-nx4/fasta-files/171020-KGA_RAxML_bipartitions.ebov_alignment_red.fasta'
+    'https://s3.us-east-2.amazonaws.com/static-nx4/fasta-files/171020-KGA_RAxML_bipartitions.ebov_alignment_red.fasta',
+  rotaVirus:
+    'https://s3.us-east-2.amazonaws.com/static-nx4/fasta-files/Reoviridae---Rotavirus---Rotavirus_A---6.aligned.fasta'
 };
 
 fontawesome.library.add(solid);
@@ -192,7 +194,11 @@ class Home extends Component {
                   </li>
                   <li onClick={() => {this.clickSample('ebola')}}>
                     <span>1,824 Sequences – Ebola (EBOV)</span><br></br>
-                    Compiled from a collection of sources referenced in Park et al., Ebola Virus Epidemiology, Transmission, and Evolution during Seven Months in Sierra Leone, Cell, 2015. 
+                    Compiled from a collection of sources referenced in Park et al., Ebola Virus Epidemiology, Transmission, and Evolution during Seven Months in Sierra Leone, Cell, 2015.
+                  </li>
+                  <li onClick={() => {this.clickSample('rotaVirus')}}>
+                    <span>5,369 Sequences – Rotavirus A</span><br></br>
+                    Generated at the Sabeti Laboratory at the Broad Institute of MIT and Harvard.
                   </li>
                 </ul>
               </div>
