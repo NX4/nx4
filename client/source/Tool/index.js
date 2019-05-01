@@ -20,9 +20,7 @@ const height = Math.max(
   html.offsetHeight
 );
 
-const closePanel = () => (
-  <div style={{fontSize: '20px', fontWeight: 'bold'}}>X</div>
-)
+const closePanel = () => <span className="fas fa-chevron-left" />;
 
 export default class Tool extends Component {
   constructor(props) {
@@ -89,7 +87,12 @@ export default class Tool extends Component {
         <SlidingPane
           closeIcon={closePanel()}
           isOpen={this.state.panelOpen}
-          title={`${this.state.typeSelection} - ${this.state.posSelection}`}
+          title={
+            <div className="side-panel-head">
+              Sequences with nucleotide <b>{this.state.typeSelection}</b> at
+              position <b>{this.state.posSelection}</b>
+            </div>
+          }
           from="right"
           width="400px"
           onRequestClose={() => this.setState({ panelOpen: false })}

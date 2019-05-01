@@ -8,3 +8,19 @@ footer {
   overflow: scroll;
   margin-bottom: 20px;
 }
+
+.side-panel-head {
+  font-size: 16px;
+}
+
+.slide-pane .slide-pane__title {
+  max-width: 90% !important
+}
+
+.slide-pane__close{
+  padding: 0px !important;
+}
+
+.slide-pane__title-wrapper {
+  margin-left: 20px !important;
+}
