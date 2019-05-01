@@ -13,17 +13,47 @@ import './style.scss';
 import 'react-sliding-pane/dist/react-sliding-pane.css';
 
 // define application Routes
-const AppRouter = () => (
-  <Router>
-    <div>
-      <Navbar />
-      <Switch>
-        <Route path="/" exact component={Home} />
-      </Switch>
-      <Footer />
-    </div>
-  </Router>
-);
+class AppRouter extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      title: '',
+      home: true
+    };
+    this.updateNavTitle = this.updateNavTitle.bind(this);
+    this.clickLogo = this.clickLogo.bind(this);
+  }
 
-// Render app to DOM
+  updateNavTitle(title) {
+    this.setState({ title });
+  }
+
+  clickLogo() {
+    this.setState({ home: true });
+  }
+
+  render() {
+    return (
+      <Router>
+        <div>
+          <Navbar title={this.state.title} goHome={this.clickLogo} />
+          <Switch>
+            <Route
+              path="/"
+              exact
+              render={() => (
+                <Home
+                  home={this.state.home}
+                  updateTitle={this.updateNavTitle}
+                />
+              )}
+            />
+          </Switch>
+          <Footer />
+        </div>
+      </Router>
+    );
+  }
+}
+
 render(<AppRouter />, document.querySelector('#app'));

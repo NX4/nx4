@@ -35,9 +35,9 @@ export default class Upload extends Component {
   }
 
   onDrop(files) {
-    this.props.setLoading();
     const formData = new FormData();
     formData.append('fastaFile', files[0]);
+    this.props.setLoading(files[0].name);
     const data = sequcence.read(files[0].preview);
     data.then(model => {
       const response = [];
@@ -61,13 +61,13 @@ export default class Upload extends Component {
           <Dropzone className="dropzoneArea" accept=".fasta, .fastaq"
             onDropAccepted={this.onDrop}
             onDropRejected={
+              () => {dispatch(action.showErrorMessage("errorMessage", "inherit"))}
               //here we need to fire an event that either renders or shows an error message
               //there is an #errorMessage text element in index.js with visibility: none
               // console.log("rejected");
-              dispatch(action.showErrorMessage("errorMessage", "inherit"))
               }>
             <div>
-              <p className="fas fa-upload" />
+              <span className="fas fa-upload" />
               <p>drop an aligned .fasta file or click here</p>
             </div>
           </Dropzone>
