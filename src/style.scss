@@ -1,0 +1,136 @@
+@import url('https://fonts.googleapis.com/css?family=Assistant:400,600');
+
+body {
+  font-family: 'Assistant', sans-serif;
+  margin: 0;
+}
+
+ul {
+  padding: 0;
+  list-style: none;
+}
+
+h4 {
+  text-transform: uppercase;
+  color: #666;
+  font-weight: 400;
+}
+
+.navbar {
+  // position: relative;
+  z-index: 1;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-wrap: nowrap;
+  flex-wrap: nowrap;
+  // justify-content: space-between;
+
+  height: 60px;
+  align-items: center;
+  padding: 0 10px;
+  margin: 0;
+  border: 1px solid rgba(238,238,238 ,1);
+  color: rgba(117,117,117 ,1);
+  box-shadow: 5px 10px 20px -20px rgb(125, 125, 125);
+
+  -webkit-box-shadow: 0px 0px 8px 1px rgba(168,168,168,1);
+  -moz-box-shadow: 0px 0px 8px 1px rgba(168,168,168,1);
+  box-shadow: 0px 0px 8px 1px rgba(168,168,168,1);
+
+  li {
+    cursor: pointer;
+  }
+
+  .navHome {
+    // LOGO
+    img {
+      width: 80px;
+      margin-right: 5px;
+    }
+  }
+
+  :not(:first-child) {
+      margin: 0;
+      padding: 0 5px;
+      margin: 0px 10px;
+      text-align: right;
+    }
+
+  .about {
+    width: auto;
+  }
+
+  .home {
+    width: 250px;
+    margin: 5px 10px;
+    text-align: left;
+  }
+
+  :nth-child(3) {
+    margin-left: auto;
+  }
+}
+
+#title {
+  margin: 60px 20px;
+}
+
+#main-container {
+  width: 96%;
+  margin: 0 auto;
+  margin-bottom: 100px;
+  margin-top: 40px;
+}
+
+#brush-container {
+  width: 100%;
+  height: 100px;
+  margin-bottom: 30px;
+}
+
+#overview-container {
+  width: 100%;
+  height: 150px;
+  margin-bottom: 10px;
+}
+
+#alignment-container {
+    width: 100%;
+    height: 230px;
+}
+
+.subheadings {
+  color: #222;
+  margin-bottom: 0;
+}
+
+.zoom {
+  cursor: move;
+  fill: none;
+  pointer-events: all;
+}
+
+#someid {
+  clip-path: url(#clip);
+}
+
+.axis {
+  .domain {
+  stroke: none;
+  }
+  .tick {
+    text {
+      cursor: default;
+    }
+    line {
+      fill: none;
+      stroke: #666;
+      shape-rendering: crispEdges;
+    }
+  }
+}
+
+.t-position, .t-entropy, .t-percent {
+  font-size: 14px;
+  font-weight: 600;
+}

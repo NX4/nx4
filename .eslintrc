@@ -1,23 +1,27 @@
 {
   "parser": "babel-eslint",
-  "extends": "airbnb",
-  "plugins": [
-    "react",
-    "import",
-    "jsx-a11y"
-  ],
   "env": {
     "browser": true,
     "node": true,
-    "es6": true
+    "es6": true,
+    "jest": true
   },
-  "globals": {
-    "__ENV__": true
-  },
+  "plugins": ["import", "react", "react-hooks"],
+  "extends": ["eslint:recommended", "plugin:import/errors", "plugin:react/recommended"],
   "rules": {
-    "no-unused-vars": "off",
-    "no-underscore-dangle": "off",
-    "no-use-before-define": "off",
-    "arrow-parens": "as-needed"
+    "no-unused-vars": [2, { "ignoreRestSiblings": true, "argsIgnorePattern": "^_" }],
+    "import/no-unresolved": [2, { "ignore": ["@trinetx/*"] }],
+    "prefer-arrow-callback": 2,
+    "react/display-name": 0,
+    "react/no-children-prop": 0,
+    "react/prop-types": 0,
+    "no-irregular-whitespace": ["error", { "skipComments": true }],
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn"
+  },
+  "settings": {
+    "react": {
+      "version": "16"
+    }
   }
 }
