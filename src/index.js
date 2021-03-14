@@ -2,10 +2,8 @@
 import React from 'react';
 import { render } from 'react-dom';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import { getState, dispatch, observe } from './store';
 // import main components
 import Home from './Home';
-import Tool from './Tool';
 import Navbar from './Navbar';
 import Footer from './Footer';
 // import styles

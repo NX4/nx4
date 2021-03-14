@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import * as d3 from 'd3';
 import actions from '../../actions/index';
 import { dispatch, observe } from '../../store';

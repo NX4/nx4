@@ -71,7 +71,7 @@ function parseData(array, fTotal) {
   });
 }
 
-function init(seqs, file) {
+function init(seqs) {
   return new Promise(resolve => {
     const fastaTotal = seqs.length;
     arraySeqs(seqs).then(arr => {

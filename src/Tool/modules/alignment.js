@@ -1,3 +1,4 @@
+/* eslint-disable */
 import * as d3 from 'd3';
 import { filter as _filter } from 'lodash';
 import actions from '../../actions/index';

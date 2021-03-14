@@ -20,18 +20,18 @@ const samplesURL = {
   ebolaGire: {
     url:
       'https://s3.us-east-2.amazonaws.com/static-nx4/fasta-files/ebov.mafft.fasta',
-    title: 'ebov.mafft.fasta'
+    title: 'ebov.mafft.fasta',
   },
   ebola: {
     url:
       'https://s3.us-east-2.amazonaws.com/static-nx4/fasta-files/171020-KGA_RAxML_bipartitions.ebov_alignment_red.fasta',
-    title: '171020-KGA_RAxML_bipartitions.ebov_alignment_red.fasta'
+    title: '171020-KGA_RAxML_bipartitions.ebov_alignment_red.fasta',
   },
   rotaVirus: {
     url:
       'https://s3.us-east-2.amazonaws.com/static-nx4/fasta-files/Reoviridae---Rotavirus---Rotavirus_A---6.aligned.fasta',
-    title: 'Reoviridae---Rotavirus---Rotavirus_A---6.aligned.fasta'
-  }
+    title: 'Reoviridae---Rotavirus---Rotavirus_A---6.aligned.fasta',
+  },
 };
 
 fontawesome.library.add(solid);
@@ -66,7 +66,7 @@ class Home extends Component {
     this.state = {
       loading: false,
       initView: true,
-      data: []
+      data: [],
     };
     this.uploadFile = this.uploadFile.bind(this);
     this.clickBack = this.clickBack.bind(this);
@@ -80,9 +80,9 @@ class Home extends Component {
     this.setState({ loading: true });
     post('/api/upload', formData, {
       headers: {
-        'Content-Type': 'multipart/form-data'
-      }
-    }).then(response => {
+        'Content-Type': 'multipart/form-data',
+      },
+    }).then((response) => {
       _this.setState({ loading: false, initView: false, data: response.data });
     });
   }
@@ -100,7 +100,7 @@ class Home extends Component {
     if (this.props.home === true && prevState.initView === false) {
       this.setState({
         initView: true,
-        data: []
+        data: [],
       });
       this.props.updateTitle('');
     }
@@ -109,24 +109,24 @@ class Home extends Component {
   clickSample(sample) {
     this.setState({ loading: true });
     this.props.updateTitle(samplesURL[sample].title);
-    get(samplesURL[sample].url).then(fasta => {
+    get(samplesURL[sample].url).then((fasta) => {
       const data = sequcence.parse(fasta.data);
       const response = [];
       for (let i = 0; i < data.length; i++) {
         response.push({
           id: data[i].id,
-          name: defineName(data[i])
+          name: defineName(data[i]),
         });
       }
       dispatch(action.setCurrentSequence(sample, response));
-      dataParser(data).then(parsedData => this.setData(parsedData));
+      dataParser(data).then((parsedData) => this.setData(parsedData));
     });
   }
 
-  clickBack(e) {
+  clickBack() {
     this.setState({
       initView: true,
-      data: []
+      data: [],
     });
   }
 
@@ -139,7 +139,7 @@ class Home extends Component {
           style={{
             height: height - 110,
             textAlign: 'center',
-            overflow: 'hidden'
+            overflow: 'hidden',
           }}
         >
           <Loader />
@@ -175,7 +175,7 @@ class Home extends Component {
                 <h4>
                   This is an open-source project maintained by a small group of
                   web-developers, visualization researchers and computational
-                  scientists. If you'd like to contribute, report bugs or learn
+                  scientists. If you&apos;d like to contribute, report bugs or learn
                   more about the project, please{' '}
                   <a href="https://github.com/NX4/nx4">
                     visit the GitHub repository.
@@ -208,7 +208,7 @@ class Home extends Component {
 
                 <div className="samplesContainer">
                   <h5 id="errorMessage">
-                    Error: It seems we don't support this file format. NX4 reads
+                    Error: It seems we don&apos;t support this file format. NX4 reads
                     .fasta files. Please see the user guide for supported
                     formats
                   </h5>
